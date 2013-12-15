@@ -1,0 +1,60 @@
+body {
+	background-color: #3e327a;
+	font-family: sans-serif;
+	margin: 0;
+	padding: 0;
+}
+
+#page_body {
+	padding: 6pt;
+}
+
+h2 {
+	color: white;
+}
+
+.toolbar {
+	background-color: #ddc;
+	color: black;
+	padding: 3pt;
+}
+
+.table_listitem {
+	background-color: #b3a5f8;
+	color: black;
+}
+
+.card_face {
+	background-color: #cca;
+	border-left: 1px solid black;
+}
+
+.cards {
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
+	border-right: 1px solid black;
+}
+
+.other_player {
+	float: left;
+	background-color: #b3a5f8;
+	color: black;
+	padding: 6pt;
+	margin-right: 6pt;
+}
+
+.hint_row td {
+	text-align: center;
+	color: white;
+	height: 32px;
+}
+
+.hint_row th {
+	text-align: right;
+	height: 32px;
+	color: white;
+}
+
+.hint_icon {
+	vertical-align: middle;
+}
