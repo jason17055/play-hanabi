@@ -189,7 +189,7 @@ function give_hint(seatId, hint)
 			sid: sessionStorage.getItem(PACKAGE+'.sid'),
 			game: gameId,
 			action: 'give_hint',
-			toPlayer: seatId,
+			target: seatId,
 			hint: hint
 			},
 		dataType: 'json',

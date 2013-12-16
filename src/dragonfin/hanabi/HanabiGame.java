@@ -9,8 +9,10 @@ public class HanabiGame
 	List<Card> discards = new ArrayList<Card>();
 	int hintsLeft;
 	int errorsMade;
-	int turn;
 	int [] piles = new int[SUIT_COUNT];
+	List<Hint> hints = new ArrayList<Hint>();
+	int turn;
+	int activeSeat;
 
 	final static Random R = new Random();
 
@@ -23,7 +25,35 @@ public class HanabiGame
 
 	Seat getActiveSeat()
 	{
-		return seats.get(0);
+		return seats.get(activeSeat);
+	}
+
+	public void giveHint(String target, String hint)
+	{
+		int seatNumber = Integer.parseInt(target);
+		hintsLeft--;
+
+		Hint h = new Hint();
+		h.from = activeSeat;
+		h.to = seatNumber;
+		h.whenGiven = turn;
+
+		if (hint.matches("^(\\d+)$")) {
+			int rank = Integer.parseInt(hint);
+			h.type = HintType.RANK;
+			h.hintData = rank;
+		}
+		else {
+			h.type = HintType.SUIT;
+			for (int i = 0; i < SUIT_NAMES.length; i++) {
+				if (hint.equals(SUIT_NAMES[i])) {
+					h.hintData = i;
+					break;
+				}
+			}
+		}
+
+		hints.add(h);
 	}
 
 	static class PlayCardResult
@@ -84,6 +114,9 @@ public class HanabiGame
 				s.hand[i] = drawCard();
 			}
 		}
+
+		turn = 0;
+		activeSeat = 0;
 	}
 
 	Card drawCard()
@@ -161,4 +194,19 @@ public class HanabiGame
 		"red", "green", "white", "blue", "yellow"
 		};
 	static final int SUIT_COUNT = SUIT_NAMES.length;
+
+	static enum HintType
+	{
+		SUIT,
+		RANK;
+	}
+
+	static class Hint
+	{
+		int from;
+		int to;
+		int whenGiven;
+		HintType type;
+		int hintData;
+	}
 }

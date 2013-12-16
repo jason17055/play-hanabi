@@ -103,8 +103,12 @@ public class GameServlet extends HttpServlet
 			message = "It was a "+rv.card+"; "
 				+ (rv.success ? "Success!" : "Oops!");
 		}
+		else if (action.equals("give_hint")) {
+			doGiveHint(game, req, resp);
+			return;
+		}
 		else {
-			message = "Don't know how to "+action;
+			message = "don't know how to "+action;
 		}
 
 		JsonGenerator out = new JsonFactory().createJsonGenerator(
@@ -113,6 +117,23 @@ public class GameServlet extends HttpServlet
 
 		out.writeStartObject();
 		out.writeStringField("message", message);
+		out.writeEndObject();
+		out.close();
+	}
+
+	void doGiveHint(HanabiGame game, HttpServletRequest req, HttpServletResponse resp)
+		throws IOException, ServletException
+	{
+		String target = req.getParameter("target");
+		String hint = req.getParameter("hint");
+
+		game.giveHint(target, hint);
+
+		JsonGenerator out = new JsonFactory().createJsonGenerator(
+				resp.getOutputStream()
+				);
+		out.writeStartObject();
+		out.writeStringField("message", "hint given; "+game.hintsLeft+" hints left");
 		out.writeEndObject();
 		out.close();
 	}
