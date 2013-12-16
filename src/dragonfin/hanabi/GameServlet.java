@@ -45,6 +45,9 @@ public class GameServlet extends HttpServlet
 			out.writeStringField("playerName", seat.user.name);
 			out.writeFieldName("hand");
 			out.writeStartArray();
+			for (HanabiGame.Card c : seat.hand) {
+				out.writeString(c.toString());
+			}
 			out.writeEndArray();
 			out.writeEndObject();
 		}

@@ -65,5 +65,30 @@ public class HanabiGame
 		{
 			return obj instanceof Card && ((Card)obj).id==this.id;
 		}
+
+		@Override
+		public String toString()
+		{
+			return getSuitName()+"-"+getRank();
+		}
+
+		String getSuitName()
+		{
+			return SUIT_NAMES[id/10];
+		}
+
+		int getRank()
+		{
+			int j = id % 10;
+			return j < 3 ? 1 :
+				j < 5 ? 2 :
+				j < 7 ? 3 :
+				j < 9 ? 4 :
+				5;
+		}
 	}
+
+	static final String [] SUIT_NAMES = {
+		"red", "green", "white", "blue", "yellow"
+		};
 }
