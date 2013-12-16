@@ -26,6 +26,8 @@ public class EventServlet extends HttpServlet
 		String sid = req.getParameter("sid");
 		String gameId = req.getParameter("game");
 		String eventId = req.getParameter("event");
+
+		HanabiUser user = s.getUserBySession(sid);
 		HanabiGame game = s.getGame(gameId);
 
 		HanabiEvent evt;
@@ -43,7 +45,7 @@ public class EventServlet extends HttpServlet
 		out.writeStartObject();
 		if (evt != null) {
 			out.writeFieldName("event");
-			evt.writeJson(out);
+			evt.writeJsonFor(out, user);
 		}
 		out.writeFieldName("nextEvent");
 		out.writeNumber((int)(evt != null ? (evt.id+1) : Integer.parseInt(eventId)));

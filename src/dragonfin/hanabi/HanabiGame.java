@@ -88,10 +88,22 @@ public class HanabiGame
 		discards.add(c);
 
 		// replace the selected card
-		seat.addCard(drawCard(), turn+1);
+		Card newCard = null;
+		if (!drawPile.isEmpty()) {
+			newCard = drawCard();
+			seat.addCard(newCard, turn+1);
+		}
 
 		// adjust available hints
 		hintsLeft = Math.min(hintsLeft+1, MAX_HINTS);
+
+		DiscardEvent evt = new DiscardEvent();
+		evt.actor = activeSeat;
+		evt.actorSeat = seat;
+		evt.slotDiscarded = slot;
+		evt.discardCard = c;
+		evt.newCard = newCard;
+		events.push(evt);
 
 		nextTurn();
 		return c;

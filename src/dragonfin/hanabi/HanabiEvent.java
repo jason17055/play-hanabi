@@ -13,7 +13,11 @@ public class HanabiEvent
 		this.message = message;
 	}
 
-	public void writeJson(JsonGenerator out)
+	protected HanabiEvent()
+	{
+	}
+
+	public void writeJsonFor(JsonGenerator out, HanabiUser user)
 		throws IOException
 	{
 		out.writeStartObject();

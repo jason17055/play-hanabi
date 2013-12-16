@@ -364,7 +364,9 @@ function discard_card(slot)
 	var gameId = queryArgs.game;
 
 	var onSuccess = function(data) {
-		location.reload();
+		//ignore;
+		// we rely on receiving an event to tell us
+		// the result of the discard
 		};
 
 	$.ajax({
