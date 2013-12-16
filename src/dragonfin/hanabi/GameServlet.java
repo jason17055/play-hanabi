@@ -72,17 +72,27 @@ public class GameServlet extends HttpServlet
 		String sid = req.getParameter("sid");
 		String gameId = req.getParameter("game");
 		String action = req.getParameter("action");
-		String slot = req.getParameter("handSlot");
+		int slot = Integer.parseInt(req.getParameter("handSlot"));
 
 		HanabiUser user = s.getUserBySession(sid);
 		HanabiGame game = s.getGame(gameId);
+
+		String message;
+		if (action.equals("play_card")) {
+			HanabiGame.PlayCardResult rv = game.playCard(slot);
+			message = "It was a "+rv.card+"; "
+				+ (rv.success ? "Success!" : "Oops!");
+		}
+		else {
+			message = "Don't know how to "+action;
+		}
 
 		JsonGenerator out = new JsonFactory().createJsonGenerator(
 				resp.getOutputStream()
 				);
 
 		out.writeStartObject();
-		out.writeStringField("message", "that was a "+action);
+		out.writeStringField("message", message);
 		out.writeEndObject();
 		out.close();
 	}

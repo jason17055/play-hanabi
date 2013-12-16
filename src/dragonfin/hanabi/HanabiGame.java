@@ -6,8 +6,11 @@ public class HanabiGame
 {
 	List<Seat> seats = new ArrayList<Seat>();
 	List<Card> drawPile = new ArrayList<Card>();
+	List<Card> discards = new ArrayList<Card>();
 	int hintsLeft;
 	int errorsMade;
+	int turn;
+	int [] piles = new int[SUIT_COUNT];
 
 	final static Random R = new Random();
 
@@ -18,14 +21,61 @@ public class HanabiGame
 		seats.add(seat);
 	}
 
+	Seat getActiveSeat()
+	{
+		return seats.get(0);
+	}
+
+	static class PlayCardResult
+	{
+		boolean success;
+		Card card;
+	}
+
+	public PlayCardResult playCard(int slot)
+	{
+		PlayCardResult rv = new PlayCardResult();
+
+		Seat seat = getActiveSeat();
+		rv.card = seat.hand[slot];
+
+		// check whether the card is playable
+		int height = piles[rv.card.suit];
+		if (rv.card.rank == height+1) {
+			// success
+			rv.success = true;
+			piles[rv.card.suit] = rv.card.rank;
+		}
+		else {
+			// failure
+			rv.success = false;
+			errorsMade++;
+			discards.add(rv.card);
+		}
+
+		// replace the selected card
+		seat.hand[slot] = drawCard();
+
+		return rv;
+	}
+
 	public void startGame()
 	{
 		hintsLeft = 8;
 		errorsMade = 0;
 
 		drawPile.clear();
-		for (int i = 0; i < 50; i++) {
-			drawPile.add(new Card(i));
+		for (int i = 0; i < SUIT_COUNT; i++) {
+			drawPile.add(new Card(i, 1));
+			drawPile.add(new Card(i, 1));
+			drawPile.add(new Card(i, 1));
+			drawPile.add(new Card(i, 2));
+			drawPile.add(new Card(i, 2));
+			drawPile.add(new Card(i, 3));
+			drawPile.add(new Card(i, 3));
+			drawPile.add(new Card(i, 4));
+			drawPile.add(new Card(i, 4));
+			drawPile.add(new Card(i, 5));
 		}
 		shuffle();
 
@@ -60,16 +110,22 @@ public class HanabiGame
 
 	class Card
 	{
-		int id;
-		Card(int id)
+		int suit;
+		int rank;
+		Card(int suit, int rank)
 		{
-			this.id = id;
+			this.suit = suit;
+			this.rank = rank;
 		}
 
 		@Override
 		public boolean equals(Object obj)
 		{
-			return obj instanceof Card && ((Card)obj).id==this.id;
+			if (obj instanceof Card) {
+				Card c = (Card)obj;
+				return c.suit==this.suit && c.rank==this.rank;
+			}
+			return false;
 		}
 
 		@Override
@@ -80,21 +136,17 @@ public class HanabiGame
 
 		String getSuitName()
 		{
-			return SUIT_NAMES[id/10];
+			return SUIT_NAMES[suit];
 		}
 
 		int getRank()
 		{
-			int j = id % 10;
-			return j < 3 ? 1 :
-				j < 5 ? 2 :
-				j < 7 ? 3 :
-				j < 9 ? 4 :
-				5;
+			return rank;
 		}
 	}
 
 	static final String [] SUIT_NAMES = {
 		"red", "green", "white", "blue", "yellow"
 		};
+	static final int SUIT_COUNT = SUIT_NAMES.length;
 }
