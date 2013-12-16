@@ -53,6 +53,9 @@ function init_game_page_controls(game_data)
 {
 	var mySeat = null;
 
+	$('.cards_left_ind').text(game_data.drawPile);
+	$('.hints_left_ind').text(game_data.hintsLeft);
+
 	for (var seatNum in game_data.seats) {
 		var seat = game_data.seats[seatNum];
 		if (seat.isYou) {

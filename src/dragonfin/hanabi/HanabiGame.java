@@ -7,7 +7,7 @@ public class HanabiGame
 	List<Seat> seats = new ArrayList<Seat>();
 	List<Card> drawPile = new ArrayList<Card>();
 	int hintsLeft;
-	int livesLeft;;
+	int errorsMade;
 
 	final static Random R = new Random();
 
@@ -21,7 +21,7 @@ public class HanabiGame
 	public void startGame()
 	{
 		hintsLeft = 8;
-		livesLeft = 3;
+		errorsMade = 0;
 
 		drawPile.clear();
 		for (int i = 0; i < 50; i++) {

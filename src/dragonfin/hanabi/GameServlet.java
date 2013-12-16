@@ -37,7 +37,7 @@ public class GameServlet extends HttpServlet
 		out.writeStringField("id", gameId);
 		out.writeNumberField("drawPile", game.drawPile.size());
 		out.writeNumberField("hintsLeft", game.hintsLeft);
-		out.writeNumberField("livesLeft", game.livesLeft);
+		out.writeNumberField("errorsMade", game.errorsMade);
 		out.writeFieldName("seats");
 		out.writeStartObject();
 		for (int i = 0; i < game.seats.size(); i++) {

@@ -25,6 +25,8 @@ public class HanabiServer
 		g.startGame();
 
 		games.put("1", g);
+
+		sessions.put("s1", usersByName.get("Jason"));
 	}
 
 	public HanabiGame getGame(String gameId)
