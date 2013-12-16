@@ -71,6 +71,11 @@ function hint_dlg_cancel()
 	$('#dimmer').hide();
 }
 
+function on_event(evt)
+{
+	alert("got event: "+evt.message);
+}
+
 var nextEventId = null;
 var eventFetchErrorCount = 0;
 function startEventSubscription()
@@ -82,7 +87,7 @@ function startEventSubscription()
 		on_event(data.event);
 
 		eventFetchErrorCount = 0;
-		$('.ajaxErrorInd').hide();
+		$('#ajaxErrorInd').hide();
 
 		nextEventId = data.nextEvent;
 		startEventSubscription();
@@ -91,7 +96,7 @@ function startEventSubscription()
 
 		eventFetchErrorCount++;
 		if (eventFetchErrorCount == 2) {
-			$('.ajaxErrorInd').show();
+			$('#ajaxErrorInd').show();
 		}
 		// the user interrupting the query to reload the page
 		// or navigate elsewhere will cause an error here,
@@ -112,6 +117,7 @@ function startEventSubscription()
 			event: nextEventId
 			},
 		dataType: 'json',
+		timeout: 10000,
 		success: onSuccess,
 		error: onError
 		});
