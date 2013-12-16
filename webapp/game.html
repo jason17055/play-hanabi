@@ -71,7 +71,7 @@ Hints left: <span class="hints_left_ind">0</span>
 </div><!--/common_area-->
 
 <div class="my_area">
-<table>
+<table id="hints_table">
 <tr>
 <td></td>
 <td align="center"><div class="cards"><img src="cards/blue.png" class="card_face"></div>
@@ -91,19 +91,8 @@ Hints left: <span class="hints_left_ind">0</span>
 <div><button type="button" onclick="discard_card(3)">Discard</button></div>
 </td>
 </tr>
-<tr class="hint_row even_row">
-<th>Jason&#x2192;<img src="cards/blue.png" class="hint_icon" width="24" height="32" alt="B"></th>
-<td>X</td>
-<td>O</td>
-<td>O</td>
-<td></td>
-</tr>
-<tr class="hint_row odd_row">
-<th>Dana&#x2192;5</th>
-<td>O</td>
-<td>O</td>
-<td>O</td>
-<td>X</td>
+<tr class="hint_row template">
+<th><span class="from player_name"></span>&#x2192;<span class="hint"><img src="cards/blue.png" class="hint_icon" width="24" height="32" alt="B"></span></th>
 </tr>
 </table>
 </div>

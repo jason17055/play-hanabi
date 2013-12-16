@@ -83,6 +83,35 @@ public class GameServlet extends HttpServlet
 		}
 		out.writeEndArray();
 
+		out.writeFieldName("hints");
+		out.writeStartArray();
+		for (HanabiGame.Hint h : game.hints) {
+			out.writeStartObject();
+			out.writeNumberField("turn", h.whenGiven);
+			out.writeStringField("from", Integer.toString(h.from));
+			out.writeStringField("to", Integer.toString(h.to));
+			out.writeStringField("hintType", h.type.name());
+			out.writeStringField("hint", h.getHintString());
+
+			HanabiGame.Seat targetSeat = game.seats.get(h.to);
+			out.writeFieldName("applies");
+			out.writeStartArray();
+			for (int slot = 0; slot < targetSeat.hand.length; slot++) {
+				if (targetSeat.whenReceived[slot] > h.whenGiven) {
+					out.writeString("");
+				}
+				else if (h.affirms(targetSeat.hand[slot])) {
+					out.writeString("Y");
+				}
+				else {
+					out.writeString("N");
+				}
+			}
+			out.writeEndArray();
+			out.writeEndObject();
+		}
+		out.writeEndArray(); //end hints
+
 		out.writeEndObject(); // end game
 		out.close();
 	}

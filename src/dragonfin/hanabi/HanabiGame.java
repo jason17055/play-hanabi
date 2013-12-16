@@ -87,6 +87,7 @@ public class HanabiGame
 
 		// replace the selected card
 		seat.hand[slot] = drawCard();
+		seat.whenReceived[slot] = turn+1;
 
 		nextTurn();
 		return rv;
@@ -115,6 +116,7 @@ public class HanabiGame
 		for (Seat s : seats) {
 			for (int i = 0; i < s.hand.length; i++) {
 				s.hand[i] = drawCard();
+				s.whenReceived[i] = 0;
 			}
 		}
 
@@ -160,6 +162,7 @@ public class HanabiGame
 	{
 		HanabiUser user;
 		Card [] hand = new Card[4];
+		int [] whenReceived = new int[4];
 	}
 
 	class Card
@@ -217,5 +220,29 @@ public class HanabiGame
 		int whenGiven;
 		HintType type;
 		int hintData;
+
+		public String getHintString()
+		{
+			switch (type) {
+			case SUIT:
+				return SUIT_NAMES[hintData];
+			case RANK:
+				return Integer.toString(hintData);
+			default:
+				throw new Error("unexpected");
+			}
+		}
+
+		public boolean affirms(Card c)
+		{
+			switch (type) {
+			case SUIT:
+				return c.suit == hintData;
+			case RANK:
+				return c.rank == hintData;
+			default:
+				throw new Error("unexpected");
+			}
+		}
 	}
 }

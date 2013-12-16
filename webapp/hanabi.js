@@ -119,6 +119,29 @@ function init_game_page_controls(game_data)
 				get_card_image(topCard)
 				);
 	}
+
+	var hint_count = 0;
+	for (var i = 0; i < game_data.hints.length; i++) {
+		var hint = game_data.hints[i];
+		//if (hint.to != mySeat.seat) {
+		//	continue;
+		//}
+
+		hint_count++;
+		var $h = $('.hint_row.template').clone();
+		$h.removeClass('template');
+		$h.addClass(hint_count % 2 == 0 ? 'even_row' : 'odd_row');
+		$('.from.player_name', $h).text(hint.from);
+		$('.hint', $h).text(hint.hint);
+
+		for (var j = 0; j < hint.applies.length; j++) {
+			var $td = $('<td></td>');
+			$td.text(hint.applies[j]);
+			$h.append($td);
+		}
+
+		$('#hints_table').append($h);
+	}
 }
 
 function get_card_image(card)
