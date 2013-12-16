@@ -30,7 +30,7 @@ public class EventServlet extends HttpServlet
 
 		HanabiEvent evt;
 		try {
-			evt = game.events.getEvent(Integer.parseInt(eventId));
+			evt = game.events.getEvent(Integer.parseInt(eventId), 10000);
 		}
 		catch (EventStream.EventNotFound e) {
 			resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -41,10 +41,12 @@ public class EventServlet extends HttpServlet
 				resp.getOutputStream()
 				);
 		out.writeStartObject();
-		out.writeFieldName("event");
-		evt.writeJson(out);
+		if (evt != null) {
+			out.writeFieldName("event");
+			evt.writeJson(out);
+		}
 		out.writeFieldName("nextEvent");
-		out.writeNumber(evt.id+1);
+		out.writeNumber((int)(evt != null ? (evt.id+1) : Integer.parseInt(eventId)));
 		out.writeEndObject();
 		out.close();
 	}

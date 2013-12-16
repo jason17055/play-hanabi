@@ -4,7 +4,7 @@ if (BASE_URL.indexOf('?') != -1) {
 	BASE_URL = BASE_URL.substring(0, BASE_URL.indexOf('?'));
 }
 
-function commonError(jqXHR, textStatus, errorThrown)
+function commonError(xhr, textStatus, errorThrown)
 {
 	alert("ajax error: "+textStatus+" "+errorThrown);
 }
@@ -84,7 +84,9 @@ function startEventSubscription()
 	var gameId = queryArgs.game;
 
 	var onSuccess = function(data) {
-		on_event(data.event);
+		if (data.event) {
+			on_event(data.event);
+		}
 
 		eventFetchErrorCount = 0;
 		$('#ajaxErrorInd').hide();
@@ -92,7 +94,7 @@ function startEventSubscription()
 		nextEventId = data.nextEvent;
 		startEventSubscription();
 	};
-	var onError = function(jqXHR, textStatus, errorThrown) {
+	var onError = function(xhr, textStatus, errorThrown) {
 
 		eventFetchErrorCount++;
 		if (eventFetchErrorCount == 2) {
@@ -117,7 +119,7 @@ function startEventSubscription()
 			event: nextEventId
 			},
 		dataType: 'json',
-		timeout: 10000,
+		timeout: 180000, //server should respond before this
 		success: onSuccess,
 		error: onError
 		});

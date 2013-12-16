@@ -20,10 +20,11 @@ public class EventStream
 		return nextEventNumber;
 	}
 
-	public synchronized HanabiEvent getEvent(int tid)
+	public synchronized HanabiEvent getEvent(int tid, long timeout)
 		throws EventNotFound
 	{
-		while (!streamClosed)
+		long startTime = System.currentTimeMillis();
+		while (!streamClosed && System.currentTimeMillis()-startTime < timeout)
 		{
 			if (!events.isEmpty()) {
 				if (tid <= events.getLast().id) {
@@ -38,13 +39,17 @@ public class EventStream
 			}
 
 			try {
-				wait();
+				wait(timeout - (System.currentTimeMillis()-startTime));
 			}
 			catch (InterruptedException e) {}
 		}
 
-		assert streamClosed;
-		throw new EventNotFound(tid);
+		if (streamClosed) {
+			throw new EventNotFound(tid);
+		}
+		else {
+			return null;
+		}
 	}
 
 	public synchronized void close()
