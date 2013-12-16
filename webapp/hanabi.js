@@ -71,6 +71,52 @@ function hint_dlg_cancel()
 	$('#dimmer').hide();
 }
 
+var nextEventId = null;
+var eventFetchErrorCount = 0;
+function startEventSubscription()
+{
+	var queryArgs = get_query_args();
+	var gameId = queryArgs.game;
+
+	var onSuccess = function(data) {
+		on_event(data.event);
+
+		eventFetchErrorCount = 0;
+		$('.ajaxErrorInd').hide();
+
+		nextEventId = data.nextEvent;
+		startEventSubscription();
+	};
+	var onError = function(jqXHR, textStatus, errorThrown) {
+
+		eventFetchErrorCount++;
+		if (eventFetchErrorCount == 2) {
+			$('.ajaxErrorInd').show();
+		}
+		// the user interrupting the query to reload the page
+		// or navigate elsewhere will cause an error here,
+		// so at first it is safe to just ignore and try again
+		window.setTimeout(startEventSubscription,
+			eventFetchErrorCount < 5 ? 2000 :
+			eventFetchErrorCount < 10 ? 20000 :
+			300000);
+	};
+
+	document.title = 'Fetching event '+nextEventId +" ("+eventFetchErrorCount+")";
+	$.ajax({
+		type: "GET",
+		url: "s/event",
+		data: {
+			sid: sessionStorage.getItem(PACKAGE+'.sid'),
+			game: gameId,
+			event: nextEventId
+			},
+		dataType: 'json',
+		success: onSuccess,
+		error: onError
+		});
+}
+
 function init_game_page_controls(game_data)
 {
 	var mySeat = null;
@@ -192,6 +238,9 @@ function init_game_page_controls(game_data)
 					);
 		}
 	}
+
+	nextEventId = game_data.nextEvent;
+	startEventSubscription();
 }
 
 function get_card_image(card)
@@ -254,13 +303,10 @@ function on_hint_choice_clicked()
 
 function give_hint(seatId, hint)
 {
-	alert('giving hint '+hint+' to player at '+seatId);
-
 	var queryArgs = get_query_args();
 	var gameId = queryArgs.game;
 
 	var onSuccess = function(data) {
-		alert(data.message);
 		location.reload();
 		};
 
@@ -286,7 +332,6 @@ function play_card(slot)
 	var gameId = queryArgs.game;
 
 	var onSuccess = function(data) {
-		alert(data.message);
 		location.reload();
 		};
 
@@ -311,7 +356,6 @@ function discard_card(slot)
 	var gameId = queryArgs.game;
 
 	var onSuccess = function(data) {
-		alert(data.message);
 		location.reload();
 		};
 

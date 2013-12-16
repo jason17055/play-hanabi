@@ -15,6 +15,11 @@ public class EventStream
 		notifyAll();
 	}
 
+	public synchronized int getNextId()
+	{
+		return nextEventNumber;
+	}
+
 	public synchronized HanabiEvent getEvent(int tid)
 		throws EventNotFound
 	{
