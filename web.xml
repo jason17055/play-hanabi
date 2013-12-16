@@ -13,6 +13,11 @@
 	<servlet-class>dragonfin.hanabi.GameServlet</servlet-class>
 </servlet>
 
+<servlet>
+	<servlet-name>event</servlet-name>
+	<servlet-class>dragonfin.hanabi.EventServlet</servlet-class>
+</servlet>
+
 <servlet-mapping>
 	<servlet-name>login</servlet-name>
 	<url-pattern>/s/login</url-pattern>
@@ -21,6 +26,11 @@
 <servlet-mapping>
 	<servlet-name>game</servlet-name>
 	<url-pattern>/s/game</url-pattern>
+</servlet-mapping>
+
+<servlet-mapping>
+	<servlet-name>event</servlet-name>
+	<url-pattern>/s/event</url-pattern>
 </servlet-mapping>
 
 </web-app>

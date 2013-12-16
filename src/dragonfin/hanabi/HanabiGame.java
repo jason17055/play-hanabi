@@ -13,6 +13,7 @@ public class HanabiGame
 	List<Hint> hints = new ArrayList<Hint>();
 	int turn;
 	int activeSeat;
+	EventStream events = new EventStream();
 
 	final static Random R = new Random();
 	static final int MAX_HINTS = 8;
@@ -166,6 +167,10 @@ public class HanabiGame
 	{
 		turn++;
 		activeSeat = (activeSeat+1) % seats.size();
+
+		events.push(
+			new HanabiEvent("It is now "+activeSeat+"'s turn.")
+			);
 	}
 
 	void shuffle()
