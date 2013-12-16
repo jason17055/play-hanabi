@@ -134,6 +134,11 @@ public class GameServlet extends HttpServlet
 			message = "It was a "+rv.card+"; "
 				+ (rv.success ? "Success!" : "Oops!");
 		}
+		else if (action.equals("discard_card")) {
+			int slot = Integer.parseInt(req.getParameter("handSlot"));
+			HanabiGame.Card c = game.discardCard(slot);
+			message = "It was a "+c;
+		}
 		else if (action.equals("give_hint")) {
 			doGiveHint(game, req, resp);
 			return;

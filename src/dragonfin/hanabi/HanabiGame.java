@@ -15,6 +15,7 @@ public class HanabiGame
 	int activeSeat;
 
 	final static Random R = new Random();
+	static final int MAX_HINTS = 8;
 
 	public void addPlayer(HanabiUser u)
 	{
@@ -62,6 +63,23 @@ public class HanabiGame
 	{
 		boolean success;
 		Card card;
+	}
+
+	public Card discardCard(int slot)
+	{
+		Seat seat = getActiveSeat();
+		Card c = seat.hand[slot];
+		discards.add(c);
+
+		// replace the selected card
+		seat.hand[slot] = drawCard();
+		seat.whenReceived[slot] = turn+1;
+
+		// adjust available hints
+		hintsLeft = Math.min(hintsLeft+1, MAX_HINTS);
+
+		nextTurn();
+		return c;
 	}
 
 	public PlayCardResult playCard(int slot)

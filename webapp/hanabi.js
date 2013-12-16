@@ -127,8 +127,19 @@ function init_game_page_controls(game_data)
 	var known_ranks = {};
 	var hint_count = 0;
 	for (var i = 0; i < game_data.hints.length; i++) {
-		var hint = game_data.hints[i];
+		var hint = game_data.hints[game_data.hints.length-1-i];
 		if (hint.to != mySeat.seat) {
+			continue;
+		}
+
+		var countApplicable = 0;
+		for (var j = 0; j < hint.applies.length; j++) {
+			var x = hint.applies[j];
+			if (x != '') {
+				countApplicable++;
+			}
+		}
+		if (countApplicable == 0) {
 			continue;
 		}
 
