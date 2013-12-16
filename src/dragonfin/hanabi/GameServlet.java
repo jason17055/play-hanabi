@@ -38,6 +38,7 @@ public class GameServlet extends HttpServlet
 		out.writeNumberField("drawPile", game.drawPile.size());
 		out.writeNumberField("hintsLeft", game.hintsLeft);
 		out.writeNumberField("errorsMade", game.errorsMade);
+
 		out.writeFieldName("seats");
 		out.writeStartObject();
 		for (int i = 0; i < game.seats.size(); i++) {
@@ -61,7 +62,19 @@ public class GameServlet extends HttpServlet
 			out.writeEndArray();
 			out.writeEndObject();
 		}
-		out.writeEndObject();
+		out.writeEndObject(); //end seats
+
+		out.writeFieldName("piles");
+		out.writeStartObject();
+		for (int i = 0; i < HanabiGame.SUIT_COUNT; i++) {
+			HanabiGame.Card c = game.getPileTopCard(i);
+			if (c != null) {
+				out.writeStringField(c.getSuitName(), c.toString());
+			}
+		}
+		out.writeEndObject(); // end piles
+
+		out.writeEndObject(); // end game
 		out.close();
 	}
 

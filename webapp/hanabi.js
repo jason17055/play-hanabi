@@ -93,6 +93,15 @@ function init_game_page_controls(game_data)
 
 		$('button.hint_btn', $x).click(hint_btn_clicked);
 	}
+
+	for (var suit in game_data.piles) {
+		var topCard = game_data.piles[suit];
+		if (topCard) {
+			$('#play_area_box .pile[data-suit="'+suit+'"] .card_face').attr('src',
+				get_card_image(topCard)
+				);
+		}
+	}
 }
 
 function get_card_image(card)

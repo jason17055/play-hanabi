@@ -102,6 +102,18 @@ public class HanabiGame
 		}
 	}
 
+	public Card getPileTopCard(int pileNumber)
+	{
+		assert pileNumber >= 0 && pileNumber < SUIT_COUNT;
+
+		if (piles[pileNumber] != 0) {
+			return new Card(pileNumber, piles[pileNumber]);
+		}
+		else {
+			return null;
+		}
+	}
+
 	class Seat
 	{
 		HanabiUser user;
