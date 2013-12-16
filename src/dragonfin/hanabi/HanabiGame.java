@@ -6,6 +6,9 @@ public class HanabiGame
 {
 	List<Seat> seats = new ArrayList<Seat>();
 	List<Card> drawPile = new ArrayList<Card>();
+	int hintsLeft;
+	int livesLeft;;
+
 	final static Random R = new Random();
 
 	public void addPlayer(HanabiUser u)
@@ -17,6 +20,9 @@ public class HanabiGame
 
 	public void startGame()
 	{
+		hintsLeft = 8;
+		livesLeft = 3;
+
 		drawPile.clear();
 		for (int i = 0; i < 50; i++) {
 			drawPile.add(new Card(i));
