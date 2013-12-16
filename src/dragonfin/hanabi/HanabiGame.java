@@ -54,6 +54,8 @@ public class HanabiGame
 		}
 
 		hints.add(h);
+
+		nextTurn();
 	}
 
 	static class PlayCardResult
@@ -86,6 +88,7 @@ public class HanabiGame
 		// replace the selected card
 		seat.hand[slot] = drawCard();
 
+		nextTurn();
 		return rv;
 	}
 
@@ -122,6 +125,12 @@ public class HanabiGame
 	Card drawCard()
 	{
 		return drawPile.remove(drawPile.size()-1);
+	}
+
+	void nextTurn()
+	{
+		turn++;
+		activeSeat = (activeSeat+1) % seats.size();
 	}
 
 	void shuffle()

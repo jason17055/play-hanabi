@@ -46,13 +46,15 @@ public class GameServlet extends HttpServlet
 			out.writeStartObject();
 			out.writeStringField("seat", Integer.toString(i));
 			out.writeStringField("playerName", seat.user.name);
-			if (seat.user == user) {
+			//if (seat.user == user) {
+			if (i == game.activeSeat) {
 				out.writeBooleanField("isYou", true);
 			}
 			out.writeFieldName("hand");
 			out.writeStartArray();
 			for (HanabiGame.Card c : seat.hand) {
-				if (seat.user == user) {
+				//if (seat.user == user) {
+				if (i == game.activeSeat) {
 					out.writeString("unknown");
 				}
 				else {

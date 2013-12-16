@@ -78,8 +78,17 @@ function init_game_page_controls(game_data)
 	$('.cards_left_ind').text(game_data.drawPile);
 	$('.hints_left_ind').text(game_data.hintsLeft);
 
+	// figure out which seat is "me"
+	var myVantagePoint = 0;
 	for (var i = 0; i < game_data.seats.length; i++) {
-		var seat = game_data.seats[i];
+		if (game_data.seats[i].isYou) {
+			myVantagePoint = i;
+			break;
+		}
+	}
+
+	for (var i = 0; i < game_data.seats.length; i++) {
+		var seat = game_data.seats[(myVantagePoint+i)%game_data.seats.length];
 		if (seat.isYou) {
 			mySeat = seat;
 			continue;
