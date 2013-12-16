@@ -77,8 +77,8 @@ function init_game_page_controls(game_data)
 	$('.cards_left_ind').text(game_data.drawPile);
 	$('.hints_left_ind').text(game_data.hintsLeft);
 
-	for (var seatNum in game_data.seats) {
-		var seat = game_data.seats[seatNum];
+	for (var i = 0; i < game_data.seats.length; i++) {
+		var seat = game_data.seats[i];
 		if (seat.isYou) {
 			mySeat = seat;
 			continue;
@@ -86,7 +86,7 @@ function init_game_page_controls(game_data)
 
 		$x = $('.other_player.template').clone();
 		$x.removeClass('template');
-		$x.attr('data-seat-id', seatNum);
+		$x.attr('data-seat-id', seat.seat);
 		$('.player_name', $x).text(seat.playerName);
 		make_cards($('.cards', $x), seat.hand);
 		$('.other_players_container').append($x);
@@ -101,6 +101,13 @@ function init_game_page_controls(game_data)
 				get_card_image(topCard)
 				);
 		}
+	}
+
+	if (game_data.discards.length > 0) {
+		var topCard = game_data.discards[game_data.discards.length-1];
+		$('#discard_pile_box .pile .card_face').attr('src',
+				get_card_image(topCard)
+				);
 	}
 }
 

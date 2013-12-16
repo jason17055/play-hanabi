@@ -40,11 +40,11 @@ public class GameServlet extends HttpServlet
 		out.writeNumberField("errorsMade", game.errorsMade);
 
 		out.writeFieldName("seats");
-		out.writeStartObject();
+		out.writeStartArray();
 		for (int i = 0; i < game.seats.size(); i++) {
 			HanabiGame.Seat seat = game.seats.get(i);
-			out.writeFieldName(Integer.toString(i));
 			out.writeStartObject();
+			out.writeStringField("seat", Integer.toString(i));
 			out.writeStringField("playerName", seat.user.name);
 			if (seat.user == user) {
 				out.writeBooleanField("isYou", true);
@@ -62,7 +62,7 @@ public class GameServlet extends HttpServlet
 			out.writeEndArray();
 			out.writeEndObject();
 		}
-		out.writeEndObject(); //end seats
+		out.writeEndArray(); //end seats
 
 		out.writeFieldName("piles");
 		out.writeStartObject();
@@ -73,6 +73,13 @@ public class GameServlet extends HttpServlet
 			}
 		}
 		out.writeEndObject(); // end piles
+
+		out.writeFieldName("discards");
+		out.writeStartArray();
+		for (HanabiGame.Card c : game.discards) {
+			out.writeString(c.toString());
+		}
+		out.writeEndArray();
 
 		out.writeEndObject(); // end game
 		out.close();
