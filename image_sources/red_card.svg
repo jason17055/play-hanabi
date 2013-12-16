@@ -15,7 +15,7 @@
    version="1.1"
    inkscape:version="0.48.2 r9819"
    sodipodi:docname="red_card.svg"
-   inkscape:export-filename="C:\cygwin\home\jason\src\play-hanabi\pages\cards/red_2.png"
+   inkscape:export-filename="C:\cygwin\home\jason\src\play-hanabi\webapp\cards/red_5.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -64,7 +64,7 @@
        sodipodi:cy="36"
        sodipodi:rx="16.285715"
        sodipodi:ry="19.428572"
-       d="m 14.142858,36 a 16.285715,19.428572 0 1 1 -32.57143,0 16.285715,19.428572 0 1 1 32.57143,0 z"
+       d="m 14.142858,36 c 0,10.730104 -7.291363,19.428572 -16.2857151,19.428572 -8.9943519,0 -16.2857149,-8.698468 -16.2857149,-19.428572 0,-10.730104 7.291363,-19.428572 16.2857149,-19.428572 8.9943521,0 16.2857151,8.698468 16.2857151,19.428572 z"
        transform="matrix(1.4736841,0,0,1.2352941,27.157895,-28.470588)" />
     <flowRoot
        xml:space="preserve"
@@ -78,5 +78,5 @@
            x="-28.857143"
            y="-7.4285717"
            style="font-size:64px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Script MT Bold;-inkscape-font-specification:'Script MT Bold, Bold'" /></flowRegion><flowPara
-         id="flowPara4308">2</flowPara></flowRoot>  </g>
+         id="flowPara4308">5</flowPara></flowRoot>  </g>
 </svg>

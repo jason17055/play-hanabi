@@ -58,3 +58,7 @@ h2 {
 .hint_icon {
 	vertical-align: middle;
 }
+
+.template {
+	display: none;
+}
