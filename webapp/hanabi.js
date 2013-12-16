@@ -87,8 +87,11 @@ function init_game_page_controls(game_data)
 		}
 	}
 
+	var player_names = {};
 	for (var i = 0; i < game_data.seats.length; i++) {
 		var seat = game_data.seats[(myVantagePoint+i)%game_data.seats.length];
+		player_names[seat.seat] = seat.playerName;
+
 		if (seat.isYou) {
 			mySeat = seat;
 			continue;
@@ -120,27 +123,63 @@ function init_game_page_controls(game_data)
 				);
 	}
 
+	var known_suits = {};
+	var known_ranks = {};
 	var hint_count = 0;
 	for (var i = 0; i < game_data.hints.length; i++) {
 		var hint = game_data.hints[i];
-		//if (hint.to != mySeat.seat) {
-		//	continue;
-		//}
+		if (hint.to != mySeat.seat) {
+			continue;
+		}
 
 		hint_count++;
 		var $h = $('.hint_row.template').clone();
 		$h.removeClass('template');
 		$h.addClass(hint_count % 2 == 0 ? 'even_row' : 'odd_row');
-		$('.from.player_name', $h).text(hint.from);
+		$('.from.player_name', $h).text(player_names[hint.from]);
 		$('.hint', $h).text(hint.hint);
 
 		for (var j = 0; j < hint.applies.length; j++) {
 			var $td = $('<td></td>');
-			$td.text(hint.applies[j]);
+			var x = hint.applies[j];
+			$td.text(x == 'Y' ? 'X' : x == 'N' ? 'O' : '');
 			$h.append($td);
+
+			if (x == 'Y') {
+				if (hint.hintType == 'SUIT') {
+					known_suits[j] = hint.hint;
+				}
+				else if (hint.hintType == 'RANK') {
+					known_ranks[j] = hint.hint;
+				}
+				else {
+					alert("unknown hint type "+hint.hintType);
+				}
+			}
 		}
 
 		$('#hints_table').append($h);
+	}
+
+	for (var slot = 0; slot < 5; slot++) {
+		if (known_suits[slot] && known_ranks[slot]) {
+			var card = known_suits[slot]+'-'+known_ranks[slot];
+			$('.my_hand .cards[data-slot="'+slot+'"] .card_face').attr('src',
+					get_card_image(card)
+					);
+		}
+		else if (known_suits[slot]) {
+			var card = known_suits[slot];
+			$('.my_hand .cards[data-slot="'+slot+'"] .card_face').attr('src',
+					'cards/'+card+'.png'
+					);
+		}
+		else if (known_ranks[slot]) {
+			var rank = known_ranks[slot];
+			$('.my_hand .cards[data-slot="'+slot+'"] .card_face').attr('src',
+					'cards/unknown_'+rank+'.png'
+					);
+		}
 	}
 }
 
