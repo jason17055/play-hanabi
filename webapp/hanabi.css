@@ -41,6 +41,7 @@ h2 {
 	color: black;
 	padding: 6pt;
 	margin-right: 6pt;
+	position: relative;
 }
 
 .hint_row td {
@@ -103,4 +104,41 @@ h2 {
 	min-width: 420px;
 	margin-left: 64px;
 	margin-right: 64px;
+}
+
+.selected_seat {
+	z-index: 2;
+}
+
+#dimmer {
+	display: none;
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 1 !important;
+	background-color: black;
+	filter: alpha(opacity=75);
+	-khtml-opacity: 0.75;
+	-moz-opacity: 0.75;
+	opacity: 0.75;
+}
+
+.dialog_wrapper {
+	display: none;
+	width: 100%;
+	top: 0px;
+	left: 0px;
+	position: absolute;
+	z-index: 5;
+}
+.dialog {
+	width: 400px;
+	height: 400px;
+	margin: 200px auto 0 auto;
+	padding; 40px;
+	background-color: #fff;
+	border: 1px solid #ccc;
+	color: #333;
 }

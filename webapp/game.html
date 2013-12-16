@@ -10,13 +10,15 @@
 
 <div id="page_body">
 
+<div id="dimmer"></div>
+
 <div class="other_players_area">
 <div class="other_players_container">
 
 <div class="other_player template">
 <div class="player_name">Jason</div>
 <div class="cards"></div>
-<div style="text-align: center"><button type="button">Give Hint</button></div>
+<div style="text-align: center"><button class="hint_btn" type="button">Give Hint</button></div>
 </div>
 
 </div><!-- end container -->
@@ -94,6 +96,36 @@ Hints left: <span class="hints_left_ind">0</span>
 </table>
 </div>
 
-</div>
+<div id="hint_dialog" class="dialog_wrapper">
+<div class="dialog">
+<div class="dialog_title">Give Hint to <span class="player_name">Player</span></div>
+<table>
+<tr><td>
+<div><b>By Color</b></div>
+<div><button type="button">Blue</button></div>
+<div><button type="button">Green</button></div>
+<div><button type="button">Red</button></div>
+<div><button type="button">White</button></div>
+<div><button type="button">Yellow</button></div>
+</td>
+<td>
+<div><b>By Number</b></div>
+<div><button type="button">1</button></div>
+<div><button type="button">2</button></div>
+<div><button type="button">3</button></div>
+<div><button type="button">4</button></div>
+<div><button type="button">5</button></div>
+</td>
+</tr>
+</table>
+
+<p>
+<button type="button">OK</button>
+<button type="button" onclick="hint_dlg_cancel()">Cancel</button>
+</p>
+
+</div><!--/dialog-->
+</div><!--/dialog_wrapper-->
+</div><!--/page_body-->
 </body>
 </html>

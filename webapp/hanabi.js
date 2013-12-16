@@ -49,6 +49,27 @@ function get_query_args()
 	return rv;
 }
 
+function hint_btn_clicked()
+{
+	var box = this;
+	while (!box.hasAttribute('data-seat-id') && box.parentNode) {
+		box = box.parentNode;
+	}
+	var seatId = box.getAttribute('data-seat-id');
+	alert("giving hint to player at seat "+seatId);
+
+	$('#dimmer').show();
+	$(box).addClass('selected_seat');
+	$('#hint_dialog').show();
+}
+
+function hint_dlg_cancel()
+{
+	$('.selected_seat').removeClass('selected_seat');
+	$('#hint_dialog').hide();
+	$('#dimmer').hide();
+}
+
 function init_game_page_controls(game_data)
 {
 	var mySeat = null;
@@ -69,6 +90,8 @@ function init_game_page_controls(game_data)
 		$('.player_name', $x).text(seat.playerName);
 		make_cards($('.cards', $x), seat.hand);
 		$('.other_players_container').append($x);
+
+		$('button.hint_btn', $x).click(hint_btn_clicked);
 	}
 }
 
