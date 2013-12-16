@@ -27,6 +27,16 @@ public class HanabiServer
 		games.put("1", g);
 	}
 
+	public HanabiGame getGame(String gameId)
+	{
+		return games.get(gameId);
+	}
+
+	public HanabiUser getUserBySession(String sid)
+	{
+		return sessions.get(sid);
+	}
+
 	public String newSession(String userName)
 	{
 		HanabiUser u = usersByName.get(userName);
