@@ -96,11 +96,11 @@ public class GameServlet extends HttpServlet
 			HanabiGame.Seat targetSeat = game.seats.get(h.to);
 			out.writeFieldName("applies");
 			out.writeStartArray();
-			for (int slot = 0; slot < targetSeat.hand.length; slot++) {
-				if (targetSeat.whenReceived[slot] > h.whenGiven) {
+			for (int slot = 0; slot < targetSeat.hand.size(); slot++) {
+				if (targetSeat.whenReceived.get(slot).intValue() > h.whenGiven) {
 					out.writeString("");
 				}
-				else if (h.affirms(targetSeat.hand[slot])) {
+				else if (h.affirms(targetSeat.hand.get(slot))) {
 					out.writeString("Y");
 				}
 				else {

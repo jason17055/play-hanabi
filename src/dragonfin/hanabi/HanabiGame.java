@@ -16,6 +16,7 @@ public class HanabiGame
 
 	final static Random R = new Random();
 	static final int MAX_HINTS = 8;
+	static final int CARDS_PER_PLAYER = 4;
 
 	public void addPlayer(HanabiUser u)
 	{
@@ -68,12 +69,11 @@ public class HanabiGame
 	public Card discardCard(int slot)
 	{
 		Seat seat = getActiveSeat();
-		Card c = seat.hand[slot];
+		Card c = seat.detachCard(slot);
 		discards.add(c);
 
 		// replace the selected card
-		seat.hand[slot] = drawCard();
-		seat.whenReceived[slot] = turn+1;
+		seat.addCard(drawCard(), turn+1);
 
 		// adjust available hints
 		hintsLeft = Math.min(hintsLeft+1, MAX_HINTS);
@@ -87,7 +87,7 @@ public class HanabiGame
 		PlayCardResult rv = new PlayCardResult();
 
 		Seat seat = getActiveSeat();
-		rv.card = seat.hand[slot];
+		rv.card = seat.detachCard(slot);
 
 		// check whether the card is playable
 		int height = piles[rv.card.suit];
@@ -104,8 +104,7 @@ public class HanabiGame
 		}
 
 		// replace the selected card
-		seat.hand[slot] = drawCard();
-		seat.whenReceived[slot] = turn+1;
+		seat.addCard(drawCard(), turn+1);
 
 		nextTurn();
 		return rv;
@@ -132,9 +131,8 @@ public class HanabiGame
 		shuffle();
 
 		for (Seat s : seats) {
-			for (int i = 0; i < s.hand.length; i++) {
-				s.hand[i] = drawCard();
-				s.whenReceived[i] = 0;
+			for (int i = 0; i < CARDS_PER_PLAYER; i++) {
+				s.addCard(drawCard(), 0);
 			}
 		}
 
@@ -179,11 +177,24 @@ public class HanabiGame
 	class Seat
 	{
 		HanabiUser user;
-		Card [] hand = new Card[4];
-		int [] whenReceived = new int[4];
+		List<Card> hand = new ArrayList<Card>();
+		List<Integer> whenReceived = new ArrayList<Integer>();
+
+		void addCard(Card c, int when)
+		{
+			this.hand.add(c);
+			this.whenReceived.add(when);
+		}
+
+		Card detachCard(int slot)
+		{
+			Card c = this.hand.remove(slot);
+			this.whenReceived.remove(slot);
+			return c;
+		}
 	}
 
-	class Card
+	static class Card
 	{
 		int suit;
 		int rank;
