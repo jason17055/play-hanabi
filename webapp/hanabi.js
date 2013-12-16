@@ -143,3 +143,53 @@ $(function() {
 		init_game_page();
 	}
 });
+
+function play_card(slot)
+{
+	var queryArgs = get_query_args();
+	var gameId = queryArgs.game;
+
+	var onSuccess = function(data) {
+		alert(data.message);
+		location.reload();
+		};
+
+	$.ajax({
+		type: 'POST',
+		url: 's/game',
+		data: {
+			sid: sessionStorage.getItem(PACKAGE+'.sid'),
+			game: gameId,
+			action: 'play_card',
+			handSlot: slot
+			},
+		dataType: 'json',
+		success: onSuccess,
+		error: commonError
+		});
+}
+
+function discard_card(slot)
+{
+	var queryArgs = get_query_args();
+	var gameId = queryArgs.game;
+
+	var onSuccess = function(data) {
+		alert(data.message);
+		location.reload();
+		};
+
+	$.ajax({
+		type: 'POST',
+		url: 's/game',
+		data: {
+			sid: sessionStorage.getItem(PACKAGE+'.sid'),
+			game: gameId,
+			action: 'discard_card',
+			handSlot: slot
+			},
+		dataType: 'json',
+		success: onSuccess,
+		error: commonError
+		});
+}

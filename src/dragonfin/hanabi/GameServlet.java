@@ -64,4 +64,26 @@ public class GameServlet extends HttpServlet
 		out.writeEndObject();
 		out.close();
 	}
+
+	@Override
+	public void doPost(HttpServletRequest req, HttpServletResponse resp)
+		throws IOException, ServletException
+	{
+		String sid = req.getParameter("sid");
+		String gameId = req.getParameter("game");
+		String action = req.getParameter("action");
+		String slot = req.getParameter("handSlot");
+
+		HanabiUser user = s.getUserBySession(sid);
+		HanabiGame game = s.getGame(gameId);
+
+		JsonGenerator out = new JsonFactory().createJsonGenerator(
+				resp.getOutputStream()
+				);
+
+		out.writeStartObject();
+		out.writeStringField("message", "that was a "+action);
+		out.writeEndObject();
+		out.close();
+	}
 }
