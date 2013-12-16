@@ -2,6 +2,7 @@
 <head>
 <link rel="stylesheet" href="hanabi.css" type="text/css">
 <script type="text/javascript" src="jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="hanabi.js"></script>
 </head>
 <body>
 <img src="box_art_full.jpg" width="480" style="position: absolute; top: 0; left: 0; width: 480px">
@@ -10,11 +11,11 @@
 	padding-top: 400px; text-align: center">
 
 
-<div style="font-size: 14pt; font-weight: bold; color: #fff; text-shadow: 1px 1px 1px #000">
+<form name="login_form" style="font-size: 14pt; font-weight: bold; color: #fff; text-shadow: 1px 1px 1px #000">
 <div><label>Your name:</label></div>
-<div><input type="text" value=""></div>
-<div><button type="button" onclick="location.href='page2.html'">ENTER</button></div>
-</div>
+<div><input type="text" name="username" value=""></div>
+<div><button type="button" onclick="do_login()">ENTER</button></div>
+</form>
 
 </div>
 </body>
