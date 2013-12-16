@@ -65,7 +65,7 @@ function init_game_page_controls(game_data)
 		$x.attr('data-seat-id', seatNum);
 		$('.player_name', $x).text(seat.playerName);
 		make_cards($('.cards', $x), seat.hand);
-		$('.other_players_area').append($x);
+		$('.other_players_container').append($x);
 	}
 }
 
