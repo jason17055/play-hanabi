@@ -56,7 +56,8 @@ function hint_btn_clicked()
 		box = box.parentNode;
 	}
 	var seatId = box.getAttribute('data-seat-id');
-	alert("giving hint to player at seat "+seatId);
+
+	$('#hint_dialog').attr('data-seat-id', seatId);
 
 	$('#dimmer').show();
 	$(box).addClass('selected_seat');
@@ -154,11 +155,48 @@ $(function() {
 	$('.remote_user').text(
 		sessionStorage.getItem(PACKAGE+'.sid')
 		);
+	$('.hint_choice_btn').click(on_hint_choice_clicked);
 
 	if (document.getElementById('game_page')) {
 		init_game_page();
 	}
 });
+
+function on_hint_choice_clicked()
+{
+	var hint_selected = this.getAttribute('data-hint-choice');
+	var seatId = $('#hint_dialog').attr('data-seat-id');
+
+	give_hint(seatId, hint_selected);
+}
+
+function give_hint(seatId, hint)
+{
+	alert('giving hint '+hint+' to player at '+seatId);
+
+	var queryArgs = get_query_args();
+	var gameId = queryArgs.game;
+
+	var onSuccess = function(data) {
+		alert(data.message);
+		location.reload();
+		};
+
+	$.ajax({
+		type: 'POST',
+		url: 's/game',
+		data: {
+			sid: sessionStorage.getItem(PACKAGE+'.sid'),
+			game: gameId,
+			action: 'give_hint',
+			toPlayer: seatId,
+			hint: hint
+			},
+		dataType: 'json',
+		success: onSuccess,
+		error: commonError
+		});
+}
 
 function play_card(slot)
 {

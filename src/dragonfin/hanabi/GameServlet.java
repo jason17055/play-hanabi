@@ -92,13 +92,13 @@ public class GameServlet extends HttpServlet
 		String sid = req.getParameter("sid");
 		String gameId = req.getParameter("game");
 		String action = req.getParameter("action");
-		int slot = Integer.parseInt(req.getParameter("handSlot"));
 
 		HanabiUser user = s.getUserBySession(sid);
 		HanabiGame game = s.getGame(gameId);
 
 		String message;
 		if (action.equals("play_card")) {
+			int slot = Integer.parseInt(req.getParameter("handSlot"));
 			HanabiGame.PlayCardResult rv = game.playCard(slot);
 			message = "It was a "+rv.card+"; "
 				+ (rv.success ? "Success!" : "Oops!");
