@@ -127,6 +127,8 @@ public class GameServlet extends HttpServlet
 		HanabiUser user = s.getUserBySession(sid);
 		HanabiGame game = s.getGame(gameId);
 
+		try {
+
 		String message;
 		if (action.equals("play_card")) {
 			int slot = Integer.parseInt(req.getParameter("handSlot"));
@@ -155,10 +157,23 @@ public class GameServlet extends HttpServlet
 		out.writeStringField("message", message);
 		out.writeEndObject();
 		out.close();
+
+		}
+		catch (HanabiException e) {
+
+			resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+
+			JsonGenerator out = new JsonFactory().createJsonGenerator(resp.getOutputStream());
+			out.writeStartObject();
+			out.writeStringField("status", "error");
+			out.writeStringField("message", e.toString());
+			out.writeEndObject();
+			out.close();
+		}
 	}
 
 	void doGiveHint(HanabiGame game, HttpServletRequest req, HttpServletResponse resp)
-		throws IOException, ServletException
+		throws IOException, ServletException, HanabiException
 	{
 		String target = req.getParameter("target");
 		String hint = req.getParameter("hint");

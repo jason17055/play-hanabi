@@ -31,14 +31,22 @@ public class HanabiGame
 	}
 
 	public void giveHint(String target, String hint)
+		throws HanabiException
 	{
+		if (hintsLeft <= 0) {
+			throw new HanabiException("No hints left; discard or play a card instead");
+		}
+
 		int seatNumber = Integer.parseInt(target);
-		hintsLeft--;
 
 		Hint h = new Hint();
 		h.from = activeSeat;
 		h.to = seatNumber;
 		h.whenGiven = turn;
+
+		if (h.from == h.to) {
+			throw new HanabiException("Invalid target for hint");
+		}
 
 		if (hint.matches("^(\\d+)$")) {
 			int rank = Integer.parseInt(hint);
@@ -47,15 +55,20 @@ public class HanabiGame
 		}
 		else {
 			h.type = HintType.SUIT;
+			h.hintData = -1;
 			for (int i = 0; i < SUIT_NAMES.length; i++) {
 				if (hint.equals(SUIT_NAMES[i])) {
 					h.hintData = i;
 					break;
 				}
 			}
+			if (h.hintData == -1) {
+				throw new HanabiException("Invalid hint '"+hint+"'");
+			}
 		}
 
 		hints.add(h);
+		hintsLeft--;
 
 		nextTurn();
 	}
@@ -67,6 +80,7 @@ public class HanabiGame
 	}
 
 	public Card discardCard(int slot)
+		throws HanabiException
 	{
 		Seat seat = getActiveSeat();
 		Card c = seat.detachCard(slot);
@@ -83,6 +97,7 @@ public class HanabiGame
 	}
 
 	public PlayCardResult playCard(int slot)
+		throws HanabiException
 	{
 		PlayCardResult rv = new PlayCardResult();
 
@@ -104,7 +119,9 @@ public class HanabiGame
 		}
 
 		// replace the selected card
-		seat.addCard(drawCard(), turn+1);
+		if (!drawPile.isEmpty()) {
+			seat.addCard(drawCard(), turn+1);
+		}
 
 		nextTurn();
 		return rv;
@@ -187,10 +204,16 @@ public class HanabiGame
 		}
 
 		Card detachCard(int slot)
+			throws HanabiException
 		{
-			Card c = this.hand.remove(slot);
-			this.whenReceived.remove(slot);
-			return c;
+			if (slot >= 0 && slot < this.hand.size()) {
+				Card c = this.hand.remove(slot);
+				this.whenReceived.remove(slot);
+				return c;
+			}
+			else {
+				throw new HanabiException("Card not found in hand slot "+slot);
+			}
 		}
 	}
 
