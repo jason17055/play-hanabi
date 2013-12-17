@@ -4,6 +4,8 @@ if (BASE_URL.indexOf('?') != -1) {
 	BASE_URL = BASE_URL.substring(0, BASE_URL.indexOf('?'));
 }
 
+var game_data = {};
+
 function commonError(xhr, textStatus, errorThrown)
 {
 	alert("ajax error: "+textStatus+" "+errorThrown);
@@ -49,6 +51,80 @@ function get_query_args()
 	return rv;
 }
 
+function setup_hint_dialog_table(seatId)
+{
+	var player_names = {};
+	var seat = null;
+	for (var i = 0; i < game_data.seats.length; i++) {
+		player_names[game_data.seats[i].seat] = game_data.seats[i].playerName;
+		if (game_data.seats[i].seat == seatId) {
+			seat = game_data.seats[i];
+		}
+	}
+	if (seat == null) {
+		alert("don't know that seat");
+	}
+
+	$('#hint_dialog .player_name').text(seat.playerName);
+
+	$('#hint_dialog .hints_table .hint_row').remove();
+	$('#hint_dialog .hints_table td.added').remove();
+
+	for (var i = 0; i < seat.hand.length; i++) {
+		var $td = $('<td align="center"><div class="cards"><img class="card_face"></div></td>');
+		$td.addClass('added');
+		$td.attr('data-slot', i);
+		set_card($('.card_face', $td), seat.hand[i]);
+		$('#hint_dialog .hints_table .hand_row').append($td);
+	}
+
+	var hint_count = 0;
+	var $tbl = $('#hint_dialog .hints_table');
+	for (var i = 0; i < game_data.hints.length; i++) {
+		var hint = game_data.hints[game_data.hints.length-1-i];
+		if (hint.to != seatId) {
+			continue;
+		}
+
+		var countApplicable = 0;
+		for (var j = 0; j < hint.applies.length; j++) {
+			var x = hint.applies[j];
+			if (x != '') {
+				countApplicable++;
+			}
+		}
+		if (countApplicable == 0) {
+			continue;
+		}
+
+		hint_count++;
+		var $h = $('.hint_row.template').clone();
+		$h.removeClass('template');
+		$h.addClass(hint_count % 2 == 0 ? 'even_row' : 'odd_row');
+		$('.from.player_name', $h).text(player_names[hint.from]);
+		$('.hint', $h).text(hint.hint);
+
+		for (var j = 0; j < hint.applies.length; j++) {
+			var $td = $('<td></td>');
+			var x = hint.applies[j];
+			$td.text(x == 'Y' ? 'X' : x == 'N' ? 'O' : '');
+			$td.attr('data-slot', j);
+			$h.append($td);
+		}
+
+		$tbl.append($h);
+	}
+
+	if (hint_count == 0) {
+		$('#hint_dialog .no_previous_hints').show();
+		$('#hint_dialog .some_previous_hints').hide();
+	}
+	else {
+		$('#hint_dialog .no_previous_hints').hide();
+		$('#hint_dialog .some_previous_hints').show();
+	}
+}
+
 function hint_btn_clicked()
 {
 	var box = this;
@@ -58,15 +134,14 @@ function hint_btn_clicked()
 	var seatId = box.getAttribute('data-seat-id');
 
 	$('#hint_dialog').attr('data-seat-id', seatId);
+	setup_hint_dialog_table(seatId);
 
 	$('#dimmer').show();
-	$(box).addClass('selected_seat');
 	$('#hint_dialog').show();
 }
 
 function hint_dlg_cancel()
 {
-	$('.selected_seat').removeClass('selected_seat');
 	$('#hint_dialog').hide();
 	$('#dimmer').hide();
 }
@@ -425,7 +500,7 @@ function startEventSubscription()
 		});
 }
 
-function init_game_page_controls(game_data)
+function init_game_page_controls()
 {
 	var mySeat = null;
 
@@ -576,7 +651,8 @@ function init_game_page()
 	var gameId = queryArgs.game;
 
 	var onSuccess = function(data) {
-		init_game_page_controls(data);
+		game_data = data;
+		init_game_page_controls();
 	};
 
 	$.ajax({
