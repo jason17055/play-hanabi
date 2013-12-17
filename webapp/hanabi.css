@@ -143,6 +143,13 @@ h2 {
 	color: #333;
 }
 
+.strike_container {
+	text-align: center;
+}
+.strike_container .strike_clone {
+	margin-left: 64px;
+}
+
 .hint_choice_btn {
 	min-width: 96px;
 }

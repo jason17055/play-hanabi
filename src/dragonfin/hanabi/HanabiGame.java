@@ -144,6 +144,10 @@ public class HanabiGame
 		evt.handSlot = slot;
 		evt.playCard = rv.card;
 		evt.newCard = newCard;
+		evt.success = rv.success;
+		if (!rv.success) {
+			evt.errorCount = errorsMade;
+		}
 		events.push(evt);
 
 		nextTurn();

@@ -166,6 +166,39 @@ function on_discard_event(evt)
 	flashFn();
 }
 
+function move_card_helper(origPos, destPos, andThen)
+{
+	var startTime = new Date().getTime();
+	var duration = 1000;
+	var moveFn;
+	moveFn = function() {
+
+		var portion = (new Date().getTime() - startTime) / duration;
+		if (portion < 0) { portion = 0; }
+		if (portion > 1) { portion = 1; }
+
+		var tmpX = origPos.left + (destPos.left - origPos.left) * portion;
+		var tmpY = origPos.top + (destPos.top - origPos.top) * portion;
+		var tmpS = 2.0 + (1.0-2.0) * portion;
+
+		$('#floating_card').css({
+			'transform': 'scale('+tmpS+')',
+			'left': tmpX+'px',
+			'top': tmpY+'px'
+			});
+		
+		if (portion < 1.0) {
+			window.setTimeout(moveFn, 30);
+		}
+		else {
+			$('#floating_card').hide();
+			andThen();
+		}
+	};
+	moveFn();
+	$('#floating_card').show();
+}
+
 function on_play_card_event(evt)
 {
 	var $box = $('.other_players_area .other_player[data-seat-id="'+evt.actor+'"]');
@@ -182,53 +215,78 @@ function on_play_card_event(evt)
 		return;
 	}
 
-	var origPos;
-	var destPos;
-	var moveStartTime;
-	var moveTowardsPileFn;
-	moveTowardsPileFn = function() {
+	var getNextCard = function() {
 
-		var portion = (new Date().getTime() - moveStartTime) / 1000;
-		if (portion < 0.0) { portion = 0.0; }
-		if (portion > 1.0) { portion = 1.0; }
-
-		var tmpX = origPos.left + (destPos.left - origPos.left) * portion;
-		var tmpY = origPos.top + (destPos.top - origPos.top) * portion;
-		var tmpS = 2.0 + (1.0-2.0) * portion;
-
-		$('#floating_card').css({
-			'transform': 'scale('+tmpS+')',
-			'left': tmpX+'px',
-			'top': tmpY+'px'
-			});
-		
-		if (portion < 1.0) {
-			window.setTimeout(moveTowardsPileFn, 30);
+		if ($box.length == 0) {
+			var nextFun = function() {
+				if (evt.newCard) {
+					add_new_slot_my_hand(evt.newCard);
+				}
+			};
+			remove_slot_my_hand(evt.handSlot, nextFun);
 		}
 		else {
-			$('#floating_card').hide();
-			//FIXME
-			//set_card($('.discard_pile .card_face'), evt.discardCard);
+			location.reload();
+		}
+	};
 
-			if ($box.length == 0) {
-				var nextFun = function() {
-					if (evt.newCard) {
-						add_new_slot_my_hand(evt.newCard);
-					}
-				};
-				remove_slot_my_hand(evt.handSlot, nextFun);
-			}
-			else {
-				location.reload();
-			}
+	var hideStrikes = function() {
+		$('#strike_dialog').hide();
+		$('#dimmer').hide();
+		$('.strike_clone').remove();
+
+		var origPos = $('#play_area_box [data-suit="'+evt.suit+'"] .card_face').offset();
+		var destPos = $('.discard_pile').offset();
+		move_card_helper(origPos, destPos, function() {
+			set_card($('.discard_pile .card_face'), evt.playCard);
+			getNextCard();
+			});
+	};
+
+	var showStrikes = function() {
+
+		// show the large card again, ready to move to discard
+		$('#floating_card').css({
+			'transform': 'scale(2)'
+			});
+		$('#floating_card').show();
+
+		// add additional strikes if necessary
+		for (var i = 1; i < evt.errorCount && i < 3; i++) {
+			var $s = $('#master_strike').clone();
+			$s.removeAttr('id');
+			$s.addClass('strike_clone');
+			$('#master_strike').after($s);
+		}
+
+		// calculate vertical offset for strikes overlay
+		var h = $('#strike_dialog').height();
+		$('#strike_dialog').css({
+			'top': (window.innerHeight-h)/2 + 'px'
+			});
+
+		// dim the background, show the strikes div, for 2 sec
+		$('#dimmer').show();
+		$('#strike_dialog').show();
+		window.setTimeout(hideStrikes, 2000);
+	};
+
+	var atPile = function() {
+
+		if (evt.success) {
+
+			set_card($('#play_area_box [data-suit="'+evt.suit+'"] .card_face'), evt.playCard);
+			getNextCard();
+		}
+		else {
+			showStrikes();
 		}
 	};
 
 	var showFloatingCard = function() {
 
-		origPos = $card.offset();
-		destPos = $('#play_area_box [data-suit="'+evt.suit+'"] .card_face').offset();
-		moveStartTime = new Date().getTime()+500;
+		var origPos = $card.offset();
+		var destPos = $('#play_area_box [data-suit="'+evt.suit+'"] .card_face').offset();
 
 		set_card($('#floating_card .card_face'), evt.playCard);
 		$('#floating_card').css({
@@ -238,7 +296,9 @@ function on_play_card_event(evt)
 			});
 		$('#floating_card').show();
 
-		window.setTimeout(moveTowardsPileFn, 500);
+		window.setTimeout(function() {
+			move_card_helper(origPos, destPos, atPile);
+			}, 500);
 	};
 
 	var flashCount = 0;

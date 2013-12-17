@@ -10,6 +10,8 @@ public class PlayCardEvent extends HanabiEvent
 	int handSlot;
 	HanabiGame.Card playCard;
 	HanabiGame.Card newCard;
+	boolean success;
+	int errorCount;
 
 	PlayCardEvent()
 	{
@@ -33,6 +35,10 @@ public class PlayCardEvent extends HanabiEvent
 			else {
 				out.writeStringField("newCard", newCard.toString());
 			}
+		}
+		out.writeBooleanField("success", success);
+		if (!success) {
+			out.writeNumberField("errorCount", errorCount);
 		}
 		out.writeStringField("message", actorSeat.user.name + " has played "
 				+ playCard);
