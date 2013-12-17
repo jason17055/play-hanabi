@@ -132,9 +132,19 @@ public class HanabiGame
 		}
 
 		// replace the selected card
+		Card newCard = null;
 		if (!drawPile.isEmpty()) {
-			seat.addCard(drawCard(), turn+1);
+			newCard = drawCard();
+			seat.addCard(newCard, turn+1);
 		}
+
+		PlayCardEvent evt = new PlayCardEvent();
+		evt.actor = activeSeat;
+		evt.actorSeat = seat;
+		evt.handSlot = slot;
+		evt.playCard = rv.card;
+		evt.newCard = newCard;
+		events.push(evt);
 
 		nextTurn();
 		return rv;

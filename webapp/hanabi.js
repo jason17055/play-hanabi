@@ -146,8 +146,8 @@ function on_discard_event(evt)
 	};
 
 	var flashCount = 0;
-	var flashFun;
-	flashFun = function() {
+	var flashFn;
+	flashFn = function() {
 		flashCount++;
 		if (flashCount % 2 == 1) {
 			$card.css({ 'visibility': 'hidden' });
@@ -156,14 +156,110 @@ function on_discard_event(evt)
 			$card.css({ 'visibility': 'visible' });
 		}
 		if (flashCount < 7) {
-			window.setTimeout(flashFun, 200);
+			window.setTimeout(flashFn, 200);
 		}
 		else {
 			showFloatingCard();
 		}
 	};
 	suspend_events();
-	flashFun();
+	flashFn();
+}
+
+function on_play_card_event(evt)
+{
+	var $box = $('.other_players_area .other_player[data-seat-id="'+evt.actor+'"]');
+	var $card;
+	if ($box.length) {
+		$card = $('.card_face[data-slot="'+evt.handSlot+'"]', $box);
+	}
+	else {
+		$card = $('.my_hand [data-slot="'+evt.handSlot+'"] .card_face');
+	}
+
+	if ($card.length == 0) {
+		alert("could not find a card for seat "+evt.actor+" slot "+evt.handSlot);
+		return;
+	}
+
+	var origPos;
+	var destPos;
+	var moveStartTime;
+	var moveTowardsPileFn;
+	moveTowardsPileFn = function() {
+
+		var portion = (new Date().getTime() - moveStartTime) / 1000;
+		if (portion < 0.0) { portion = 0.0; }
+		if (portion > 1.0) { portion = 1.0; }
+
+		var tmpX = origPos.left + (destPos.left - origPos.left) * portion;
+		var tmpY = origPos.top + (destPos.top - origPos.top) * portion;
+		var tmpS = 2.0 + (1.0-2.0) * portion;
+
+		$('#floating_card').css({
+			'transform': 'scale('+tmpS+')',
+			'left': tmpX+'px',
+			'top': tmpY+'px'
+			});
+		
+		if (portion < 1.0) {
+			window.setTimeout(moveTowardsPileFn, 30);
+		}
+		else {
+			$('#floating_card').hide();
+			//FIXME
+			//set_card($('.discard_pile .card_face'), evt.discardCard);
+
+			if ($box.length == 0) {
+				var nextFun = function() {
+					if (evt.newCard) {
+						add_new_slot_my_hand(evt.newCard);
+					}
+				};
+				remove_slot_my_hand(evt.handSlot, nextFun);
+			}
+			else {
+				location.reload();
+			}
+		}
+	};
+
+	var showFloatingCard = function() {
+
+		origPos = $card.offset();
+		destPos = $('#play_area_box [data-suit="'+evt.suit+'"] .card_face').offset();
+		moveStartTime = new Date().getTime()+500;
+
+		set_card($('#floating_card .card_face'), evt.playCard);
+		$('#floating_card').css({
+			'transform': 'scale(2)',
+			'left': origPos.left+'px',
+			'top':  origPos.top+'px'
+			});
+		$('#floating_card').show();
+
+		window.setTimeout(moveTowardsPileFn, 500);
+	};
+
+	var flashCount = 0;
+	var flashFn;
+	flashFn = function() {
+		flashCount++;
+		if (flashCount % 2 == 1) {
+			$card.css({ 'visibility': 'hidden' });
+		}
+		else {
+			$card.css({ 'visibility': 'visible' });
+		}
+		if (flashCount < 7) {
+			window.setTimeout(flashFn, 200);
+		}
+		else {
+			showFloatingCard();
+		}
+	};
+	suspend_events();
+	flashFn();
 }
 
 function add_new_slot_my_hand()
@@ -201,6 +297,9 @@ function on_event(evt)
 {
 	if (evt.event == 'discard') {
 		on_discard_event(evt);
+	}
+	else if (evt.event == 'play_card') {
+		on_play_card_event(evt);
 	}
 	else {
 		alert("got event: "+evt.message);
@@ -483,7 +582,8 @@ function play_card(slot)
 	var gameId = queryArgs.game;
 
 	var onSuccess = function(data) {
-		location.reload();
+		// no need to do anything on success;
+		// we will get an event telling us what happened
 		};
 
 	$.ajax({
