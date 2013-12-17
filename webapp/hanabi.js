@@ -79,7 +79,7 @@ function on_discard_event(evt)
 		$card = $('.card_face[data-slot="'+evt.handSlot+'"]', $box);
 	}
 	else {
-		$card = $('.my_hand .cards[data-slot="'+evt.handSlot+'"] .card_face');
+		$card = $('.my_hand [data-slot="'+evt.handSlot+'"] .card_face');
 	}
 
 	if ($card.length == 0) {
@@ -114,10 +114,17 @@ function on_discard_event(evt)
 			$('#floating_card').hide();
 			set_card($('.discard_pile .card_face'), evt.discardCard);
 
-			// TODO- slide cards into gap, then deal new card
-			// to the right-most spot
-
-			location.reload();
+			if ($box.length == 0) {
+				var nextFun = function() {
+					if (evt.newCard) {
+						add_new_slot_my_hand(evt.newCard);
+					}
+				};
+				remove_slot_my_hand(evt.handSlot, nextFun);
+			}
+			else {
+				location.reload();
+			}
 		}
 	};
 
@@ -157,6 +164,32 @@ function on_discard_event(evt)
 	};
 	suspend_events();
 	flashFun();
+}
+
+function add_new_slot_my_hand()
+{
+//TODO
+	location.reload();
+}
+
+function remove_slot_my_hand(slot, andThen)
+{
+	$('.my_hand [data-slot="'+slot+'"]').hide('slow', function()
+		{
+
+		$('.my_hand [data-slot="'+slot+'"]').remove();
+		shift_hint_table_columns(slot);
+		andThen();
+		});
+}
+
+function shift_hint_table_columns(slot)
+{
+	var $tds = $('#hints_table [data-slot="'+(1+slot)+'"]');
+	if ($tds.length) {
+		$tds.attr('data-slot', slot);
+		return shift_hint_table_columns(1+slot);
+	}
 }
 
 function set_card($card_face, card)
@@ -316,6 +349,7 @@ function init_game_page_controls(game_data)
 			var $td = $('<td></td>');
 			var x = hint.applies[j];
 			$td.text(x == 'Y' ? 'X' : x == 'N' ? 'O' : '');
+			$td.attr('data-slot', j);
 			$h.append($td);
 
 			if (x == 'Y') {
@@ -337,19 +371,19 @@ function init_game_page_controls(game_data)
 	for (var slot = 0; slot < 5; slot++) {
 		if (known_suits[slot] && known_ranks[slot]) {
 			var card = known_suits[slot]+'-'+known_ranks[slot];
-			$('.my_hand .cards[data-slot="'+slot+'"] .card_face').attr('src',
+			$('.my_hand [data-slot="'+slot+'"] .card_face').attr('src',
 					get_card_image(card)
 					);
 		}
 		else if (known_suits[slot]) {
 			var card = known_suits[slot];
-			$('.my_hand .cards[data-slot="'+slot+'"] .card_face').attr('src',
+			$('.my_hand [data-slot="'+slot+'"] .card_face').attr('src',
 					'cards/'+card+'.png'
 					);
 		}
 		else if (known_ranks[slot]) {
 			var rank = known_ranks[slot];
-			$('.my_hand .cards[data-slot="'+slot+'"] .card_face').attr('src',
+			$('.my_hand [data-slot="'+slot+'"] .card_face').attr('src',
 					'cards/unknown_'+rank+'.png'
 					);
 		}
