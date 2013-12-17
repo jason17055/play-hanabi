@@ -158,3 +158,8 @@ h2 {
 	padding: 4px 12px;
 	display: none;
 }
+
+#floating_card {
+	position: absolute;
+	display: none;
+}
