@@ -44,6 +44,7 @@ public class EventServlet extends HttpServlet
 				);
 		out.writeStartObject();
 		if (evt != null) {
+			out.writeNumberField("eventId", evt.id);
 			out.writeFieldName("event");
 			evt.writeJsonFor(out, user);
 		}

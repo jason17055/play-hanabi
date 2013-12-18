@@ -220,9 +220,7 @@ public class HanabiGame
 		turn++;
 		activeSeat = (activeSeat+1) % seats.size();
 
-		events.push(
-			new HanabiEvent("It is now "+activeSeat+"'s turn.")
-			);
+		events.push(new NextTurnEvent(turn, activeSeat));
 	}
 
 	void shuffle()

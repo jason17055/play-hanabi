@@ -125,6 +125,26 @@ function setup_hint_dialog_table(seatId)
 	}
 }
 
+function play_card_btn_clicked()
+{
+	var box = this;
+	while (!box.hasAttribute('data-slot') && box.parentNode) {
+		box = box.parentNode;
+	}
+	var handSlot = box.getAttribute('data-slot');
+	play_card(handSlot);
+}
+
+function discard_card_btn_clicked()
+{
+	var box = this;
+	while (!box.hasAttribute('data-slot') && box.parentNode) {
+		box = box.parentNode;
+	}
+	var handSlot = box.getAttribute('data-slot');
+	discard_card(handSlot);
+}
+
 function hint_btn_clicked()
 {
 	var box = this;
@@ -174,7 +194,36 @@ function remove_hand_slot(seatId, slot, andThen)
 
 function on_new_card_event(evt, andThen)
 {
-	//TODO
+	var seatId = evt.target;
+	var $box = $('.other_players_area .other_player[data-seat-id="'+seatId+'"]');
+	if ($box.length != 0) {
+
+		var $c = $('<img class="card_face">');
+		$c.hide();
+		$c.attr('data-slot', evt.handSlot);
+		set_card($c, evt.newCard);
+		$('.cards', $box).append($c);
+
+		$c.show('slow', andThen);
+		return;
+	}
+
+	// own hand
+	var $td_content = $('#my_hand_slot_template').clone();
+	$td_content.removeClass('template');
+
+	var $td = $('<td></td>');
+	$td.append($td_content);
+	$td.hide();
+
+	$td.attr('data-slot', evt.handSlot);
+	set_card($('.card_face', $td), evt.newCard);
+
+	$('.play_card_btn', $td).click(play_card_btn_clicked);
+	$('.discard_card_btn', $td).click(discard_card_btn_clicked);
+
+	$('#hints_table .my_hand').append($td);
+	$td.show('slow', andThen);
 }
 
 function on_discard_event(evt, andThen)
@@ -401,22 +450,19 @@ function on_play_card_event(evt, andThen)
 	flashFn();
 }
 
-function add_new_slot_my_hand()
-{
-//TODO
-	location.reload();
-}
-
 function remove_slot_my_hand(slot, andThen)
 {
 	var $col = $('#hints_table td[data-slot="'+slot+'"]');
-	$col.hide('slow', function()
-		{
+	var remaining = $col.length;
+	var complete = function() {
+		if (--remaining == 0) {
+			$col.remove();
+			shift_hint_table_columns(slot);
+			andThen();
+		}
+	};
 
-		$col.remove();
-		shift_hint_table_columns(slot);
-		andThen();
-		});
+	$col.hide('slow', complete);
 }
 
 function shift_hint_table_columns(slot)
@@ -491,7 +537,7 @@ function on_hint_event(evt, andThen)
 			$('.cards', $box).removeClass('dim');
 			$('.cards .hilite').removeClass('hilite');
 			$h.hide();
-			location.reload();
+			andThen();
 
 			}, 2500);
 		});
@@ -535,6 +581,9 @@ function on_event(evt, andThen)
 	}
 	else if (evt.event == 'new_card') {
 		on_new_card_event(evt, andThen);
+	}
+	else if (evt.event == 'next_turn') {
+		location.reload();
 	}
 	else if (evt.event == 'play_card') {
 		on_play_card_event(evt, andThen);
@@ -735,6 +784,8 @@ function init_game_page_controls()
 
 function get_card_image(card)
 {
+	if (card == 'unknown') { return 'cards/null.png'; }
+
 	var p = card.split('-');
 	return 'cards/'+p[0]+'_'+p[1]+'.png';
 }
@@ -744,9 +795,8 @@ function make_cards($box, card_array)
 	for (var i = 0; i < card_array.length; i++) {
 		var card = card_array[i];
 		var $c = $('<img class="card_face">');
-		$c.attr('src', get_card_image(card));
-		$c.attr('alt', card);
 		$c.attr('data-slot', i);
+		set_card($c, card);
 		$box.append($c);
 	}
 }

@@ -204,3 +204,7 @@ h2 {
 .active_player_ind {
 	display: none;
 }
+
+.my_hand_slot {
+	text-align: center;
+}
