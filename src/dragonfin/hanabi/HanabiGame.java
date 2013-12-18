@@ -39,6 +39,10 @@ public class HanabiGame
 		}
 
 		int seatNumber = Integer.parseInt(target);
+		if (seatNumber < 0 || seatNumber >= seats.size()) {
+			throw new HanabiException("Invalid target for hint");
+		}
+		Seat targetSeat = seats.get(seatNumber);
 
 		Hint h = new Hint();
 		h.from = activeSeat;
@@ -77,6 +81,10 @@ public class HanabiGame
 		evt.target = h.to;
 		evt.hintType = h.type;
 		evt.hint = h.getHintString();
+		evt.applies = new boolean[targetSeat.hand.size()];
+		for (int i = 0; i < targetSeat.hand.size(); i++) {
+			evt.applies[i] = h.affirms(targetSeat.hand.get(i));
+		}
 		events.push(evt);
 
 		nextTurn();

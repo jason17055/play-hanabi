@@ -192,3 +192,11 @@ h2 {
 #hint_dialog {
 	text-align: center;
 }
+
+.cards.dim .card_face {
+	opacity: 0.25;
+}
+.cards.dim .card_face.hilite {
+	opacity: 1;
+	background-color: #fff;
+}

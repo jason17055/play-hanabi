@@ -10,6 +10,7 @@ public class HintEvent extends HanabiEvent
 	int target;
 	HanabiGame.HintType hintType;
 	String hint;
+	boolean [] applies;
 
 	HintEvent()
 	{
@@ -25,6 +26,17 @@ public class HintEvent extends HanabiEvent
 		out.writeStringField("target", Integer.toString(target));
 		out.writeStringField("hintType", hintType.name());
 		out.writeStringField("hint", hint);
+		if (applies != null) {
+			out.writeFieldName("applies");
+			out.writeStartArray();
+			int count = 0;
+			for (int slot = 0; slot < applies.length; slot++) {
+				out.writeString(applies[slot] ? "Y" : "N");
+				count += (applies[slot] ? 1 : 0);
+			}
+			out.writeEndArray();
+			out.writeNumberField("count", count);
+		}
 		out.writeStringField("message", actorSeat.user.name + " has given a hint");
 		out.writeEndObject();
 	}

@@ -471,7 +471,26 @@ function on_hint_event(evt)
 	$h.show();
 	suspend_events();
 
-	animated_move_to($h, destPos, 500);
+	animated_move_to($h, destPos, 500, function()
+		{
+
+		var $box = $('.other_players_area .other_player[data-seat-id="'+evt.target+'"]');
+		$('.cards', $box).addClass('dim');
+		for (var i = 0; i < evt.applies.length; i++) {
+			if (evt.applies[i] == "Y") {
+				$('.cards [data-slot="'+i+'"]', $box).addClass('hilite');
+			}
+		}
+
+		window.setTimeout(function() {
+
+			$('.cards', $box).removeClass('dim');
+			$('.cards .hilite').removeClass('hilite');
+			$h.hide();
+			location.reload();
+
+			}, 2500);
+		});
 }
 
 function animated_move_to($box, destPos, duration, andThen)
