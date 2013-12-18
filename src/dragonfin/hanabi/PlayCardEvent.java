@@ -9,7 +9,6 @@ public class PlayCardEvent extends HanabiEvent
 	HanabiGame.Seat actorSeat;
 	int handSlot;
 	HanabiGame.Card playCard;
-	HanabiGame.Card newCard;
 	boolean success;
 	int errorCount;
 
@@ -27,15 +26,6 @@ public class PlayCardEvent extends HanabiEvent
 		out.writeNumberField("handSlot", handSlot);
 		out.writeStringField("playCard", playCard.toString());
 		out.writeStringField("suit", playCard.getSuitName());
-		if (newCard != null) {
-			if (actorSeat.user == user) {
-				// hide replacement card for the actor himself
-				out.writeStringField("newCard", "unknown");
-			}
-			else {
-				out.writeStringField("newCard", newCard.toString());
-			}
-		}
 		out.writeBooleanField("success", success);
 		if (!success) {
 			out.writeNumberField("errorCount", errorCount);

@@ -146,7 +146,33 @@ function hint_dlg_cancel()
 	$('#dimmer').hide();
 }
 
-function on_discard_event(evt)
+function remove_hand_slot(seatId, slot, andThen)
+{
+	var $box = $('.other_players_area .other_player[data-seat-id="'+seatId+'"]');
+	if ($box.length == 0) {
+		remove_slot_my_hand(slot, andThen);
+	}
+	else {
+		$('[data-slot="'+slot+'"]', $box).hide('slow', function()
+			{
+
+			// remove card
+			$('[data-slot="'+slot+'"]', $box).remove();
+
+			// shift slots for remaining cards
+			var $x = $('[data-slot="'+(1+slot)+'"]', $box);
+			while ($x.length) {
+				$x.attr('data-slot', slot);
+				slot++;
+				$x = $('[data-slot="'+(1+slot)+'"]', $box);
+			}
+
+			andThen();
+		});
+	}
+}
+
+function on_discard_event(evt, andThen)
 {
 	var $box = $('.other_players_area .other_player[data-seat-id="'+evt.actor+'"]');
 	var $card;
@@ -189,17 +215,7 @@ function on_discard_event(evt)
 			$('#floating_card').hide();
 			set_card($('.discard_pile .card_face'), evt.discardCard);
 
-			if ($box.length == 0) {
-				var nextFun = function() {
-					if (evt.newCard) {
-						add_new_slot_my_hand(evt.newCard);
-					}
-				};
-				remove_slot_my_hand(evt.handSlot, nextFun);
-			}
-			else {
-				location.reload();
-			}
+			remove_hand_slot(evt.actor, evt.handSlot, andThen);
 		}
 	};
 
@@ -237,7 +253,6 @@ function on_discard_event(evt)
 			showFloatingCard();
 		}
 	};
-	suspend_events();
 	flashFn();
 }
 
@@ -274,7 +289,7 @@ function move_card_helper(origPos, destPos, andThen)
 	$('#floating_card').show();
 }
 
-function on_play_card_event(evt)
+function on_play_card_event(evt, andThen)
 {
 	var $box = $('.other_players_area .other_player[data-seat-id="'+evt.actor+'"]');
 	var $card;
@@ -290,21 +305,6 @@ function on_play_card_event(evt)
 		return;
 	}
 
-	var getNextCard = function() {
-
-		if ($box.length == 0) {
-			var nextFun = function() {
-				if (evt.newCard) {
-					add_new_slot_my_hand(evt.newCard);
-				}
-			};
-			remove_slot_my_hand(evt.handSlot, nextFun);
-		}
-		else {
-			location.reload();
-		}
-	};
-
 	var hideStrikes = function() {
 		$('#strike_dialog').hide();
 		$('#dimmer').hide();
@@ -314,7 +314,7 @@ function on_play_card_event(evt)
 		var destPos = $('.discard_pile').offset();
 		move_card_helper(origPos, destPos, function() {
 			set_card($('.discard_pile .card_face'), evt.playCard);
-			getNextCard();
+			remove_hand_slot(evt.actor, evt.handSlot, andThen);
 			});
 	};
 
@@ -351,7 +351,7 @@ function on_play_card_event(evt)
 		if (evt.success) {
 
 			set_card($('#play_area_box [data-suit="'+evt.suit+'"] .card_face'), evt.playCard);
-			getNextCard();
+			remove_hand_slot(evt.actor, evt.handSlot, andThen);
 		}
 		else {
 			showStrikes();
@@ -393,7 +393,6 @@ function on_play_card_event(evt)
 			showFloatingCard();
 		}
 	};
-	suspend_events();
 	flashFn();
 }
 
@@ -450,7 +449,7 @@ function get_hint_anchor(seatId)
 	}
 }
 
-function on_hint_event(evt)
+function on_hint_event(evt, andThen)
 {
 	var $h = $('#floating_hint');
 	var imgref = evt.hintType == 'SUIT' ?
@@ -469,7 +468,6 @@ function on_hint_event(evt)
 		'top': origPos.top+'px'
 		});
 	$h.show();
-	suspend_events();
 
 	animated_move_to($h, destPos, 500, function()
 		{
@@ -521,49 +519,50 @@ function animated_move_to($box, destPos, duration, andThen)
 	moveFn();
 }
 
-function on_event(evt)
+function on_event(evt, andThen)
 {
 	if (evt.event == 'discard') {
-		on_discard_event(evt);
+		on_discard_event(evt, andThen);
 	}
 	else if (evt.event == 'hint') {
-		on_hint_event(evt);
+		on_hint_event(evt, andThen);
 	}
 	else if (evt.event == 'play_card') {
-		on_play_card_event(evt);
+		on_play_card_event(evt, andThen);
 	}
 	else {
 		alert("got event: "+evt.message);
+		andThen();
 	}
-}
-
-var eventsSuspended = false;
-function suspend_events()
-{
-	eventsSuspended = true;
 }
 
 var nextEventId = null;
 var eventFetchErrorCount = 0;
 function startEventSubscription()
 {
-	if (eventsSuspended) {
-		return;
-	}
-
 	var queryArgs = get_query_args();
 	var gameId = queryArgs.game;
 
 	var onSuccess = function(data) {
-		if (data.event) {
-			on_event(data.event);
-		}
 
+		// clear error indicator (if lit)
 		eventFetchErrorCount = 0;
 		$('#ajaxErrorInd').hide();
 
-		nextEventId = data.nextEvent;
-		startEventSubscription();
+		// what to do after processing the event
+		var fn = function() {
+			nextEventId = data.nextEvent;
+			startEventSubscription();
+			};
+
+		// process the event, if any
+		if (data.event) {
+			on_event(data.event, fn);
+		}
+		else {
+			fn();
+		}
+
 	};
 	var onError = function(xhr, textStatus, errorThrown) {
 

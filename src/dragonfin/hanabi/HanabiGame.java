@@ -103,13 +103,6 @@ public class HanabiGame
 		Card c = seat.detachCard(slot);
 		discards.add(c);
 
-		// replace the selected card
-		Card newCard = null;
-		if (!drawPile.isEmpty()) {
-			newCard = drawCard();
-			seat.addCard(newCard, turn+1);
-		}
-
 		// adjust available hints
 		hintsLeft = Math.min(hintsLeft+1, MAX_HINTS);
 
@@ -118,8 +111,20 @@ public class HanabiGame
 		evt.actorSeat = seat;
 		evt.slotDiscarded = slot;
 		evt.discardCard = c;
-		evt.newCard = newCard;
 		events.push(evt);
+
+		// replace the selected card
+		if (!drawPile.isEmpty()) {
+			Card newCard = drawCard();
+			seat.addCard(newCard, turn+1);
+
+			NewCardEvent evt1 = new NewCardEvent();
+			evt1.target = activeSeat;
+			evt1.targetSeat = seat;
+			evt1.handSlot = seat.hand.size()-1;
+			evt1.newCard = newCard;
+			events.push(evt1);
+		}
 
 		nextTurn();
 		return c;
@@ -147,24 +152,29 @@ public class HanabiGame
 			discards.add(rv.card);
 		}
 
-		// replace the selected card
-		Card newCard = null;
-		if (!drawPile.isEmpty()) {
-			newCard = drawCard();
-			seat.addCard(newCard, turn+1);
-		}
-
 		PlayCardEvent evt = new PlayCardEvent();
 		evt.actor = activeSeat;
 		evt.actorSeat = seat;
 		evt.handSlot = slot;
 		evt.playCard = rv.card;
-		evt.newCard = newCard;
 		evt.success = rv.success;
 		if (!rv.success) {
 			evt.errorCount = errorsMade;
 		}
 		events.push(evt);
+
+		// replace the selected card
+		if (!drawPile.isEmpty()) {
+			Card newCard = drawCard();
+			seat.addCard(newCard, turn+1);
+
+			NewCardEvent evt1 = new NewCardEvent();
+			evt1.target = activeSeat;
+			evt1.targetSeat = seat;
+			evt1.handSlot = seat.hand.size()-1;
+			evt1.newCard = newCard;
+			events.push(evt1);
+		}
 
 		nextTurn();
 		return rv;
