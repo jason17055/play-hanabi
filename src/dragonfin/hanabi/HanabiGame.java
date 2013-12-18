@@ -71,6 +71,14 @@ public class HanabiGame
 		hints.add(h);
 		hintsLeft--;
 
+		HintEvent evt = new HintEvent();
+		evt.actor = activeSeat;
+		evt.actorSeat = getActiveSeat();
+		evt.target = h.to;
+		evt.hintType = h.type;
+		evt.hint = h.getHintString();
+		events.push(evt);
+
 		nextTurn();
 	}
 

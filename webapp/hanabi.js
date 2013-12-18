@@ -428,10 +428,39 @@ function set_card($card_face, card)
 	$card_face.attr('src', get_card_image(card));
 }
 
+function on_hint_event(evt)
+{
+	var $h = $('#floating_hint');
+	var imgref = evt.hintType == 'SUIT' ?
+			('cards/'+evt.hint+'.png') :
+			('cards/unknown_'+evt.hint+'.png')
+	alert('want image to be '+imgref);
+
+	$('.hint_icon', $h).attr('src', imgref);
+	$('.hint_icon', $h).attr('alt', evt.hint);
+
+	//assume hint is coming from self
+	{
+		var w = $('.my_area #hints_table').outerWidth();
+		var cx = $h.outerWidth();
+		var p = $('.my_area').offset();
+		$h.css({
+			'left': (p.left+w/2-cx/2)+'px',
+			'top': p.top+'px'
+			});
+	}
+
+	$h.show();
+	suspend_events();
+}
+
 function on_event(evt)
 {
 	if (evt.event == 'discard') {
 		on_discard_event(evt);
+	}
+	else if (evt.event == 'hint') {
+		on_hint_event(evt);
 	}
 	else if (evt.event == 'play_card') {
 		on_play_card_event(evt);
@@ -685,6 +714,8 @@ function on_hint_choice_clicked()
 	var seatId = $('#hint_dialog').attr('data-seat-id');
 
 	give_hint(seatId, hint_selected);
+	$('#hint_dialog').hide();
+	$('#dimmer').hide();
 }
 
 function give_hint(seatId, hint)
@@ -693,7 +724,7 @@ function give_hint(seatId, hint)
 	var gameId = queryArgs.game;
 
 	var onSuccess = function(data) {
-		location.reload();
+		//nothing
 		};
 
 	$.ajax({

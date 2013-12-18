@@ -173,6 +173,14 @@ h2 {
 	display: none;
 }
 
+#floating_hint {
+	position: absolute;
+	display: none;
+	background-color: #950;
+	color: black;
+	text-align: center;
+}
+
 .dialog_title {
 	width: 100%;
 	background-color: #3e327a;
