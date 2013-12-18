@@ -22,6 +22,7 @@ public class HintEvent extends HanabiEvent
 		out.writeStartObject();
 		out.writeStringField("event", "hint");
 		out.writeStringField("actor", Integer.toString(actor));
+		out.writeStringField("target", Integer.toString(target));
 		out.writeStringField("hintType", hintType.name());
 		out.writeStringField("hint", hint);
 		out.writeStringField("message", actorSeat.user.name + " has given a hint");

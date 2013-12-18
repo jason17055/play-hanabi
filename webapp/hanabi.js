@@ -428,30 +428,78 @@ function set_card($card_face, card)
 	$card_face.attr('src', get_card_image(card));
 }
 
+function get_hint_anchor(seatId)
+{
+	var $h = $('#floating_hint');
+
+	var $box = $('.other_players_area .other_player[data-seat-id="'+seatId+'"]');
+	if ($box.length != 0) {
+		var p = $box.offset();
+		p.left += $box.outerWidth()/2 - $h.outerWidth()/2;
+		p.top += $box.outerHeight() - $h.outerHeight()/2;
+		return p;
+	}
+	else {
+		var w = $('.my_area #hints_table').outerWidth();
+		var cx = $h.outerWidth();
+		var p = $('.my_area').offset();
+		return {
+			'left': p.left + w/2 - $h.outerWidth()/2,
+			'top': p.top
+			};
+	}
+}
+
 function on_hint_event(evt)
 {
 	var $h = $('#floating_hint');
 	var imgref = evt.hintType == 'SUIT' ?
 			('cards/'+evt.hint+'.png') :
 			('cards/unknown_'+evt.hint+'.png')
-	alert('want image to be '+imgref);
 
 	$('.hint_icon', $h).attr('src', imgref);
 	$('.hint_icon', $h).attr('alt', evt.hint);
 
-	//assume hint is coming from self
-	{
-		var w = $('.my_area #hints_table').outerWidth();
-		var cx = $h.outerWidth();
-		var p = $('.my_area').offset();
-		$h.css({
-			'left': (p.left+w/2-cx/2)+'px',
-			'top': p.top+'px'
-			});
-	}
+	// find origin and destination of hint
+	var origPos = get_hint_anchor(evt.actor);
+	var destPos = get_hint_anchor(evt.target);
 
+	$h.css({
+		'left': origPos.left+'px',
+		'top': origPos.top+'px'
+		});
 	$h.show();
 	suspend_events();
+
+	animated_move_to($h, destPos, 500);
+}
+
+function animated_move_to($box, destPos, duration, andThen)
+{
+	var origPos = $box.offset();
+	var startTime = new Date().getTime();
+	function moveFn() {
+
+		var portion = (new Date().getTime() - startTime) / duration;
+		if (portion < 0) { portion = 0; }
+		if (portion > 1) { portion = 1; }
+
+		var tmpX = origPos.left + (destPos.left - origPos.left) * portion;
+		var tmpY = origPos.top + (destPos.top - origPos.top) * portion;
+
+		$box.css({
+			'left': tmpX+'px',
+			'top': tmpY+'px'
+			});
+
+		if (portion < 1) {
+			window.setTimeout(moveFn, 30);
+		}
+		else if (andThen) {
+			andThen();
+		}
+	};
+	moveFn();
 }
 
 function on_event(evt)
