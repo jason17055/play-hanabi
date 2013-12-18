@@ -39,6 +39,8 @@ public class GameServlet extends HttpServlet
 		out.writeNumberField("drawPile", game.drawPile.size());
 		out.writeNumberField("hintsLeft", game.hintsLeft);
 		out.writeNumberField("errorsMade", game.errorsMade);
+		out.writeNumberField("turnNumber", game.turn);
+		out.writeStringField("activePlayer", Integer.toString(game.activeSeat));
 
 		out.writeFieldName("seats");
 		out.writeStartArray();
@@ -47,15 +49,13 @@ public class GameServlet extends HttpServlet
 			out.writeStartObject();
 			out.writeStringField("seat", Integer.toString(i));
 			out.writeStringField("playerName", seat.user.name);
-			//if (seat.user == user) {
-			if (i == game.activeSeat) {
+			if (seat.user == user) {
 				out.writeBooleanField("isYou", true);
 			}
 			out.writeFieldName("hand");
 			out.writeStartArray();
 			for (HanabiGame.Card c : seat.hand) {
-				//if (seat.user == user) {
-				if (i == game.activeSeat) {
+				if (seat.user == user) {
 					out.writeString("unknown");
 				}
 				else {

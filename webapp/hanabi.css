@@ -200,3 +200,7 @@ h2 {
 	opacity: 1;
 	background-color: #fff;
 }
+
+.active_player_ind {
+	display: none;
+}

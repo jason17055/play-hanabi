@@ -21,12 +21,13 @@ public class HanabiServer
 		g.addPlayer(usersByName.get("Jason"));
 		g.addPlayer(usersByName.get("Dana"));
 		g.addPlayer(usersByName.get("Bob"));
-		g.addPlayer(usersByName.get("Sarah"));
+		//g.addPlayer(usersByName.get("Sarah"));
 		g.startGame();
 
 		games.put("1", g);
 
 		sessions.put("s1", usersByName.get("Jason"));
+		sessions.put("s2", usersByName.get("Dana"));
 	}
 
 	public HanabiGame getGame(String gameId)

@@ -632,6 +632,8 @@ function init_game_page_controls()
 		$('button.hint_btn', $x).click(hint_btn_clicked);
 	}
 
+	$('.other_player[data-seat-id="'+game_data.activePlayer+'"] .active_player_ind').show();
+
 	for (var suit in game_data.piles) {
 		var topCard = game_data.piles[suit];
 		if (topCard) {
