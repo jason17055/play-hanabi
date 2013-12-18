@@ -172,6 +172,11 @@ function remove_hand_slot(seatId, slot, andThen)
 	}
 }
 
+function on_new_card_event(evt, andThen)
+{
+	//TODO
+}
+
 function on_discard_event(evt, andThen)
 {
 	var $box = $('.other_players_area .other_player[data-seat-id="'+evt.actor+'"]');
@@ -404,10 +409,11 @@ function add_new_slot_my_hand()
 
 function remove_slot_my_hand(slot, andThen)
 {
-	$('.my_hand [data-slot="'+slot+'"]').hide('slow', function()
+	var $col = $('#hints_table td[data-slot="'+slot+'"]');
+	$col.hide('slow', function()
 		{
 
-		$('.my_hand [data-slot="'+slot+'"]').remove();
+		$col.remove();
 		shift_hint_table_columns(slot);
 		andThen();
 		});
@@ -526,6 +532,9 @@ function on_event(evt, andThen)
 	}
 	else if (evt.event == 'hint') {
 		on_hint_event(evt, andThen);
+	}
+	else if (evt.event == 'new_card') {
+		on_new_card_event(evt, andThen);
 	}
 	else if (evt.event == 'play_card') {
 		on_play_card_event(evt, andThen);
