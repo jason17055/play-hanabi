@@ -668,6 +668,7 @@ function init_game_page_controls()
 	for (var i = 0; i < game_data.seats.length; i++) {
 		if (game_data.seats[i].isYou) {
 			myVantagePoint = i;
+			mySeat = game_data.seats[i];
 			break;
 		}
 	}
@@ -678,7 +679,6 @@ function init_game_page_controls()
 		player_names[seat.seat] = seat.playerName;
 
 		if (seat.isYou) {
-			mySeat = seat;
 			continue;
 		}
 
@@ -710,6 +710,19 @@ function init_game_page_controls()
 				);
 	}
 
+	if (mySeat != null) {
+		init_game_page_hints(mySeat);
+	}
+	else {
+		$('.my_area').hide();
+	}
+
+	nextEventId = game_data.nextEvent;
+	startEventSubscription();
+}
+
+function init_game_page_hints(mySeat)
+{
 	var known_suits = {};
 	var known_ranks = {};
 	var hint_count = 0;
@@ -780,9 +793,6 @@ function init_game_page_controls()
 					);
 		}
 	}
-
-	nextEventId = game_data.nextEvent;
-	startEventSubscription();
 }
 
 function get_card_image(card)
