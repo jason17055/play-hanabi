@@ -13,11 +13,14 @@ function commonError(xhr, textStatus, errorThrown)
 
 function do_login()
 {
+	var player_name = document.login_form.username.value;
+
 	var onSuccess = function(data) {
 
 		// store session id
 		var sid = data.sid;
 		sessionStorage.setItem(PACKAGE+'.sid', sid);
+		sessionStorage.setItem(PACKAGE+'.username', player_name);
 
 		// send user to lobby
 		location.href = 'lobby.html';
@@ -27,7 +30,7 @@ function do_login()
 		type: 'POST',
 		url: 's/login',
 		data: {
-			name: document.login_form.username.value
+			name: player_name
 			},
 		dataType: 'json',
 		success: onSuccess,
@@ -829,6 +832,8 @@ $(function() {
 		sessionStorage.getItem(PACKAGE+'.sid')
 		);
 	$('.hint_choice_btn').click(on_hint_choice_clicked);
+	$('.create_table_btn').click(on_create_table_clicked);
+	$('.create_table_cancel_btn').click(on_create_table_cancel_clicked);
 
 	if (document.getElementById('game_page')) {
 		init_game_page();
@@ -842,6 +847,39 @@ function on_hint_choice_clicked()
 
 	give_hint(seatId, hint_selected);
 	$('#hint_dialog').hide();
+	$('#dimmer').hide();
+}
+
+function on_create_table_clicked()
+{
+	$('#create_table_dialog').show();
+	$('#dimmer').show();
+
+	document.create_table_form.name.value =
+		sessionStorage.getItem(PACKAGE+'.username');
+}
+
+function do_create_table()
+{
+	var table_name = document.create_table_form.name.value;
+	var onSuccess = function(data) {
+	};
+
+	$.ajax({
+		type: 'POST',
+		url: 's/gamelist',
+		data: {
+			name: table_name
+			},
+		dataType: 'json',
+		success: onSuccess,
+		error: commonError
+		});
+}
+
+function on_create_table_cancel_clicked()
+{
+	$('#create_table_dialog').hide();
 	$('#dimmer').hide();
 }
 

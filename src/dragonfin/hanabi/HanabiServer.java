@@ -9,6 +9,7 @@ public class HanabiServer
 	Map<String,HanabiGame> games = new HashMap<String,HanabiGame>();
 
 	int nextSessionId = 1;
+	int nextGameId = 1;
 
 	HanabiServer()
 	{
@@ -24,10 +25,16 @@ public class HanabiServer
 		//g.addPlayer(usersByName.get("Sarah"));
 		g.startGame();
 
-		games.put("1", g);
+		addGame(g);
 
 		sessions.put("s1", usersByName.get("Jason"));
 		sessions.put("s2", usersByName.get("Dana"));
+	}
+
+	void addGame(HanabiGame g)
+	{
+		g.gameId = Integer.toString(nextGameId++);
+		games.put(g.gameId, g);
 	}
 
 	public HanabiGame getGame(String gameId)

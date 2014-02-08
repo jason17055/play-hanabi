@@ -4,6 +4,10 @@ import java.util.*;
 
 public class HanabiGame
 {
+	String gameId;
+	String gameName;
+	HanabiUser owner;
+
 	List<Seat> seats = new ArrayList<Seat>();
 	List<Card> drawPile = new ArrayList<Card>();
 	List<Card> discards = new ArrayList<Card>();

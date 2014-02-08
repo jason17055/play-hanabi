@@ -6,10 +6,13 @@
 </head>
 <body>
 <div class="toolbar">
-<button type="button">Create New Table</button>
+<!--
+<button type="button" class="create_table_btn">Create New Table</button>
+-->
 </div>
 
 <div id="page_body">
+<div id="dimmer"></div>
 <div>Hello <span class="remote_user"></span></div>
 
 <h2>Games Waiting for Players</h2>
@@ -25,6 +28,30 @@
 </div>
 </div>
 
+<div>
+<button type="button" class="create_table_btn">Create New Table</button>
 </div>
+
+
+<div id="create_table_dialog" class="dialog_wrapper">
+<div class="dialog">
+<div class="dialog_title">Create New Table</div>
+
+<form name="create_table_form" onsubmit="do_create_table(); return false">
+<div><label>Name of table:
+<input type="text" class="table_name_entry"></label>
+</div>
+<div>
+<button type="submit">OK</button>
+<button type="button" class="create_table_cancel_btn">Cancel</button>
+</div>
+
+</form>
+
+</div><!--/dialog-->
+</div><!--/dialog_wrapper-->
+
+</div><!--/page_body-->
+
 </body>
 </html>
