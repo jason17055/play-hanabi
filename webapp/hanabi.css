@@ -209,3 +209,10 @@ h2 {
 .my_hand_slot {
 	text-align: center;
 }
+
+.join_btn {
+	display: none;
+}
+.goto_table_btn {
+	display: none;
+}

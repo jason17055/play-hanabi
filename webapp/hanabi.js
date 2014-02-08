@@ -815,8 +815,19 @@ function init_lobby_page_controls(games_data)
 
 		$tab.attr('data-table-id', game_data.id);
 		$('.table_name', $tab).text(game_data.name);
+
 		$('.join_btn', $tab).click(on_join_table_clicked);
-		$('.watch_btn', $tab).click(on_watch_table_clicked);
+		$('.goto_table_btn', $tab).click(on_goto_table_clicked);
+
+		if (game_data.canJoin) {
+			$('.join_btn', $tab).show();
+		}
+		if (game_data.canRejoin) {
+			$('.goto_table_btn', $tab).text('Re-Join').show();
+		}
+		else if (game_data.canWatch) {
+			$('.goto_table_btn', $tab).text('Watch').show();
+		}
 
 		var seatsImg = 'seats_'+game_data.playerCount+'of'+game_data.maxPlayers+'.png';
 		var seatsAlt = (+game_data.maxPlayers - game_data.playerCount) + ' open seats';
@@ -845,11 +856,25 @@ function on_join_table_clicked()
 	}
 
 	var tableId = box.getAttribute('data-table-id');
-	alert('want to join table '+tableId);
-	location.href='game.html?game=1';
+	var onSuccess = function(data) {
+		location.reload();
+	};
+
+	$.ajax({
+		type: 'POST',
+		url: 's/gamelist',
+		data: {
+			sid: sessionStorage.getItem(PACKAGE+'.sid'),
+			action: 'join',
+			table: tableId
+			},
+		dataType: 'json',
+		success: onSuccess,
+		error: commonError
+		});
 }
 
-function on_watch_table_clicked()
+function on_goto_table_clicked()
 {
 	var box = this;
 	while (!box.hasAttribute('data-table-id') && box.parentNode) {
@@ -857,7 +882,7 @@ function on_watch_table_clicked()
 	}
 
 	var tableId = box.getAttribute('data-table-id');
-	alert('want to watch table '+tableId);
+	location.href='game.html?game=1';
 }
 
 function init_lobby_page()
@@ -948,6 +973,7 @@ function do_create_table()
 		url: 's/gamelist',
 		data: {
 			sid: sessionStorage.getItem(PACKAGE+'.sid'),
+			action: 'create',
 			name: table_name
 			},
 		dataType: 'json',

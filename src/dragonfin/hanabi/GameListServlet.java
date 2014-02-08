@@ -47,6 +47,7 @@ public class GameListServlet extends HttpServlet
 			out.writeFieldName("players");
 			out.writeStartArray();
 
+			boolean foundSelf = false;
 			for (HanabiGame.Seat seat : g.seats)
 			{
 				out.writeStartObject();
@@ -58,10 +59,21 @@ public class GameListServlet extends HttpServlet
 				if (seat.user == g.owner) {
 					out.writeBooleanField("owner", true);
 				}
+				if (seat.user == user) {
+					foundSelf = true;
+				}
 				out.writeEndObject();
 			}
-
 			out.writeEndArray(); //players
+
+			if (foundSelf) {
+				out.writeBooleanField("canRejoin", true);
+			}
+			else {
+				out.writeBooleanField("canJoin", true);
+				out.writeBooleanField("canWatch", true);
+			}
+
 			out.writeEndObject();
 		}
 
@@ -75,23 +87,42 @@ public class GameListServlet extends HttpServlet
 		throws IOException, ServletException
 	{
 		String sid = req.getParameter("sid");
+		String action = req.getParameter("action");
 
 		HanabiUser user = s.getUserBySession(sid);
 
-		HanabiGame g = new HanabiGame();
-		g.gameName = req.getParameter("name");
-		g.owner = user;
-		g.addPlayer(user);
+		if (action.equals("create")) {
 
-		s.addGame(g);
+			HanabiGame g = new HanabiGame();
+			g.gameName = req.getParameter("name");
+			g.owner = user;
+			g.addPlayer(user);
 
-		JsonGenerator out = new JsonFactory().createJsonGenerator(
-				resp.getOutputStream()
-				);
+			s.addGame(g);
 
-		out.writeStartObject();
-		out.writeStringField("gameId", g.gameId);
-		out.writeEndObject();
-		out.close();
+			JsonGenerator out = new JsonFactory().createJsonGenerator(
+					resp.getOutputStream()
+					);
+
+			out.writeStartObject();
+			out.writeStringField("gameId", g.gameId);
+			out.writeEndObject();
+			out.close();
+		}
+		else if (action.equals("join")) {
+
+			String gameId = req.getParameter("table");
+			HanabiGame g = s.getGame(gameId);
+			g.addPlayer(user);
+
+			JsonGenerator out = new JsonFactory().createJsonGenerator(
+					resp.getOutputStream()
+					);
+			out.writeStartObject();
+			out.writeStringField("status", "success");
+			out.writeStringField("gameId", g.gameId);
+			out.writeEndObject();
+			out.close();
+		}
 	}
 }
