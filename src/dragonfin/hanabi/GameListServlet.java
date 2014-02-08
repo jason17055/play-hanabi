@@ -124,5 +124,19 @@ public class GameListServlet extends HttpServlet
 			out.writeEndObject();
 			out.close();
 		}
+		else if (action.equals("leave")) {
+
+			String gameId = req.getParameter("table");
+			HanabiGame g = s.getGame(gameId);
+			g.removePlayer(user);
+
+			JsonGenerator out = new JsonFactory().createJsonGenerator(
+					resp.getOutputStream()
+					);
+			out.writeStartObject();
+			out.writeStringField("status", "success");
+			out.writeEndObject();
+			out.close();
+		}
 	}
 }

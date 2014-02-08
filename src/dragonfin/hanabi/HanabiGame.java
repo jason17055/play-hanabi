@@ -18,6 +18,7 @@ public class HanabiGame
 	int turn;
 	int activeSeat;
 	EventStream events = new EventStream();
+	boolean started;
 
 	final static Random R = new Random();
 	static final int MAX_HINTS = 8;
@@ -28,6 +29,33 @@ public class HanabiGame
 		Seat seat = new Seat();
 		seat.user = u;
 		seats.add(seat);
+	}
+
+	public void removePlayer(HanabiUser u)
+	{
+		Seat seat = findPlayer(u);
+		if (seat != null) {
+			if (started) {
+				seat.user = null;
+			}
+			else {
+				seats.remove(seat);
+			}
+
+			ParticipationChangeEvent evt = new ParticipationChangeEvent();
+			evt.message = u.name + " has left";
+			events.push(evt);
+		}
+	}
+
+	Seat findPlayer(HanabiUser u)
+	{
+		for (Seat s : seats) {
+			if (s.user == u) {
+				return s;
+			}
+		}
+		return null;
 	}
 
 	Seat getActiveSeat()

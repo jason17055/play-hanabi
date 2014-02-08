@@ -943,6 +943,7 @@ $(function() {
 	$('.hint_choice_btn').click(on_hint_choice_clicked);
 	$('.create_table_btn').click(on_create_table_clicked);
 	$('.create_table_cancel_btn').click(on_create_table_cancel_clicked);
+	$('.leave_table_btn').click(on_leave_table_clicked);
 
 	if (document.getElementById('game_page')) {
 		init_game_page();
@@ -985,6 +986,29 @@ function do_create_table()
 			sid: sessionStorage.getItem(PACKAGE+'.sid'),
 			action: 'create',
 			name: table_name
+			},
+		dataType: 'json',
+		success: onSuccess,
+		error: commonError
+		});
+}
+
+function on_leave_table_clicked()
+{
+	var queryArgs = get_query_args();
+	var gameId = queryArgs.game;
+
+	var onSuccess = function(data) {
+		location.href = 'lobby.html';
+	};
+
+	$.ajax({
+		type: 'POST',
+		url: 's/gamelist',
+		data: {
+			sid: sessionStorage.getItem(PACKAGE+'.sid'),
+			action: 'leave',
+			table: gameId
 			},
 		dataType: 'json',
 		success: onSuccess,
