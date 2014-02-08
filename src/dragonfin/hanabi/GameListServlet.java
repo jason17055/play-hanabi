@@ -43,6 +43,25 @@ public class GameListServlet extends HttpServlet
 			out.writeNumberField("playerCount",
 				g.seats.size()
 				);
+			out.writeNumberField("maxPlayers", 5);
+			out.writeFieldName("players");
+			out.writeStartArray();
+
+			for (HanabiGame.Seat seat : g.seats)
+			{
+				out.writeStartObject();
+				if (seat.user != null) {
+					out.writeStringField("name", seat.user.name);
+				} else {
+					out.writeStringField("name", "empty");
+				}
+				if (seat.user == g.owner) {
+					out.writeBooleanField("owner", true);
+				}
+				out.writeEndObject();
+			}
+
+			out.writeEndArray(); //players
 			out.writeEndObject();
 		}
 

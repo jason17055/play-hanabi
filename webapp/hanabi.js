@@ -818,6 +818,21 @@ function init_lobby_page_controls(games_data)
 		$('.join_btn', $tab).click(on_join_table_clicked);
 		$('.watch_btn', $tab).click(on_watch_table_clicked);
 
+		var seatsImg = 'seats_'+game_data.playerCount+'of'+game_data.maxPlayers+'.png';
+		var seatsAlt = (+game_data.maxPlayers - game_data.playerCount) + ' open seats';
+		$('img.seats_info', $tab).
+			attr('src', seatsImg).
+			attr('alt', seatsAlt);
+
+		var playerNames = [];
+		for (var j = 0; j < game_data.players.length; j++) {
+			var p = game_data.players[j];
+			playerNames.push(
+				p.name + (p.owner ? " (Host)" : "")
+				);
+		}
+		$('.player_names', $tab).text(playerNames.join(', '));
+
 		$('.table_list').append($tab);
 	}
 }
@@ -932,6 +947,7 @@ function do_create_table()
 		type: 'POST',
 		url: 's/gamelist',
 		data: {
+			sid: sessionStorage.getItem(PACKAGE+'.sid'),
 			name: table_name
 			},
 		dataType: 'json',
