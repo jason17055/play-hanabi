@@ -882,7 +882,7 @@ function on_goto_table_clicked()
 	}
 
 	var tableId = box.getAttribute('data-table-id');
-	location.href='game.html?game=1';
+	location.href='game.html?game=' + escape(tableId);
 }
 
 function init_lobby_page()
