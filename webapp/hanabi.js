@@ -804,6 +804,65 @@ function make_cards($box, card_array)
 	}
 }
 
+function init_lobby_page_controls(games_data)
+{
+	for (var i = 0; i < games_data.length; i++)
+	{
+		var game_data = games_data[i];
+
+		var $tab = $('.table_listitem.template').clone();
+		$tab.removeClass('template');
+
+		$tab.attr('data-table-id', game_data.id);
+		$('.table_name', $tab).text(game_data.name);
+		$('.join_btn', $tab).click(on_join_table_clicked);
+		$('.watch_btn', $tab).click(on_watch_table_clicked);
+
+		$('.table_list').append($tab);
+	}
+}
+
+function on_join_table_clicked()
+{
+	var box = this;
+	while (!box.hasAttribute('data-table-id') && box.parentNode) {
+		box = box.parentNode;
+	}
+
+	var tableId = box.getAttribute('data-table-id');
+	alert('want to join table '+tableId);
+	location.href='game.html?game=1';
+}
+
+function on_watch_table_clicked()
+{
+	var box = this;
+	while (!box.hasAttribute('data-table-id') && box.parentNode) {
+		box = box.parentNode;
+	}
+
+	var tableId = box.getAttribute('data-table-id');
+	alert('want to watch table '+tableId);
+}
+
+function init_lobby_page()
+{
+	var onSuccess = function(data) {
+		init_lobby_page_controls(data.games);
+	};
+
+	$.ajax({
+		type: 'GET',
+		url: 's/gamelist',
+		data: {
+			sid: sessionStorage.getItem(PACKAGE+'.sid')
+			},
+		dataType: 'json',
+		success: onSuccess,
+		error: commonError
+		});
+}
+
 function init_game_page()
 {
 	var queryArgs = get_query_args();
@@ -838,6 +897,9 @@ $(function() {
 	if (document.getElementById('game_page')) {
 		init_game_page();
 	}
+	if (document.getElementById('lobby_page')) {
+		init_lobby_page();
+	}
 });
 
 function on_hint_choice_clicked()
@@ -863,6 +925,7 @@ function do_create_table()
 {
 	var table_name = document.create_table_form.name.value;
 	var onSuccess = function(data) {
+		location.reload();
 	};
 
 	$.ajax({

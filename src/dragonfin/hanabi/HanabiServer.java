@@ -19,6 +19,7 @@ public class HanabiServer
 		usersByName.put("Sarah", new HanabiUser("Sarah"));
 
 		HanabiGame g = new HanabiGame();
+		g.gameName = "Initial Game";
 		g.addPlayer(usersByName.get("Jason"));
 		g.addPlayer(usersByName.get("Dana"));
 		g.addPlayer(usersByName.get("Bob"));

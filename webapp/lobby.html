@@ -4,7 +4,7 @@
 <script type="text/javascript" src="jquery-1.10.2.min.js"></script>
 <script type="text/javascript" src="hanabi.js"></script>
 </head>
-<body>
+<body id="lobby_page">
 <div class="toolbar">
 <!--
 <button type="button" class="create_table_btn">Create New Table</button>
@@ -17,13 +17,13 @@
 
 <h2>Games Waiting for Players</h2>
 <div class="table_list">
-<div class="table_listitem">
+<div class="table_listitem template">
 	<table border="0" cellspacing="0" cellpadding="0">
 	<tr><td width="64" height="64" valign="top"><img src="open_game.png" alt="[Open]" style="position:absolute; width:64px; height:64px"><img src="seats_3of5.png" alt="2 open seats" style="position:absolute; width:64px; height:64px"></td>
-	<td style="padding-left: 3pt"><div>Name of Game</div>
+	<td style="padding-left: 3pt"><div class="table_name">Name of Game</div>
 	<div>Jason (Host), Dana, Bob</div>
-	<div><button type="button" onclick="location.href='game.html?game=1'">Join</button>
-		<button type="button">Watch</button></div>
+	<div><button type="button" class="join_btn">Join</button>
+		<button type="button" class="watch_btn">Watch</button></div>
 	</td></tr></table>
 </div>
 </div>
@@ -39,7 +39,7 @@
 
 <form name="create_table_form" onsubmit="do_create_table(); return false">
 <div><label>Name of table:
-<input type="text" class="table_name_entry"></label>
+<input type="text" name="name"></label>
 </div>
 <div>
 <button type="submit">OK</button>
