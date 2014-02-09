@@ -240,6 +240,7 @@ public class HanabiGame
 
 		turn = 0;
 		activeSeat = 0;
+		started = true;
 	}
 
 	Card drawCard()

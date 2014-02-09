@@ -40,6 +40,9 @@ public class GameListServlet extends HttpServlet
 			out.writeStartObject();
 			out.writeStringField("id", g.gameId);
 			out.writeStringField("name", g.gameName);
+			out.writeStringField("status",
+				g.started ? "started" : "open"
+				);
 			out.writeNumberField("playerCount",
 				g.seats.size()
 				);

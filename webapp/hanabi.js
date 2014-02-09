@@ -839,6 +839,10 @@ function init_lobby_page_controls(games_data)
 			$('.goto_table_btn', $tab).text('Watch').show();
 		}
 
+		$('img.table_status', $tab).
+			attr('src', game_data.status + '_game.png').
+			attr('alt', "["+game_data.status+"]");
+
 		var seatsImg = 'seats_'+game_data.playerCount+'of'+game_data.maxPlayers+'.png';
 		var seatsAlt = (+game_data.maxPlayers - game_data.playerCount) + ' open seats';
 		$('img.seats_info', $tab).
